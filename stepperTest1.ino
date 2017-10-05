@@ -19,8 +19,8 @@
   const int echoPinRechts = 3;
 
 // const int's van de auto
-  const int bandRadius = 0; // omtrek van de band;
-  const int afstandWielDraaipunt = 0; // afstand van het wiel tot het draaipunt van de auto
+  const int bandRadius = 6.5*Pi; // omtrek van de band test;
+  const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
   const int volledigeRotatieafstandWiel = 2*Pi*afstandWielDraaipunt; //De afstand die beide wielen afleggwen voor een voledig rondje om de AUTO zijn as;
   const int stappenPerRotatie = 4096; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het 4096 is);
   const int gradenNaarStappen = stappenPerRotatie/360; //het omrekenen van graden naar stappen, dus 180graden*gradenNaarStappen=2048 als stappenPerRotatie 4096 is;
@@ -30,7 +30,7 @@ AccelStepper stepper1(AccelStepper::HALF4WIRE, A0, A2, A1, A3); // motor links
 AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
 
 // temp variables
-  int inputR = 80; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
+  int inputR = 20; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
   int input = 80; //this is a temporary testing variable resembles the pi's input going forward(in cm).
 
 
@@ -54,6 +54,8 @@ void setup() {
 
 
 void loop() {
+  drive(input); // de afstandsensoren moeten nog in drive en rotate
+  rotate(inputR);
   //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
   // Clears the trigPinLinks
   digitalWrite(trigPinLinks, LOW);
@@ -139,7 +141,7 @@ void loop() {
 
 
 // rotate functie opzet;
-void rotation(int graden){
+void rotate(int graden){
   if(error) return; //Breaks out of roation if there is an error
   stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
   stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
@@ -152,10 +154,10 @@ void rotation(int graden){
 
 
 
-void drive (){
+void drive (int cm){
   if(error) return;
-  stepper1.move( round(input * bandRadius) ); // het draaien van de linker stappenmotor klopt nog niet test
-  stepper2.move( round(input * bandRadius) ); // het draaien van de rechter stappenmotor
+  stepper1.move( round(cm * bandRadius) ); // het draaien van de linker stappenmotor klopt nog niet test
+  stepper2.move( round(cm * bandRadius) ); // het draaien van de rechter stappenmotor
   //calling run for both steppers to make them actualy run.
   while(stepper1.isRunning() || stepper2.isRunning()){
     stepper1.run();
