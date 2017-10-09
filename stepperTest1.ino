@@ -54,8 +54,10 @@ void setup() {
 
 
 void loop() {
+  
   drive(input); // de afstandsensoren moeten nog in drive en rotate
   rotate(inputR);
+  
   //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
   // Clears the trigPinLinks
   digitalWrite(trigPinLinks, LOW);
@@ -93,12 +95,72 @@ void loop() {
   // Calculating the distance
   int distanceRechts= durationRechts*0.034/2;
 
-   
-  // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
+
+  
+}
+
+
+
+// rotate functie opzet;
+void rotate(int graden){
+  if(error) return; //Breaks out of roation if there is an error
+
+
+  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
+  // Clears the trigPinLinks
+  digitalWrite(trigPinLinks, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinLinks on HIGH state for 10 micro seconds
+  digitalWrite(trigPinLinks, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinLinks, LOW);
+  // Reads the echoPinLinks, returns the sound wave travel time in microseconds
+  long durationLinks = pulseIn(echoPinLinks, HIGH);
+  // Calculating the distance
+  int distanceLinks= durationLinks*0.034/2;
+    
+  // Clears the trigPinVoor
+  digitalWrite(trigPinVoor, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinVoor on HIGH state for 10 micro seconds
+  digitalWrite(trigPinVoor, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinVoor, LOW);
+  // Reads the echoPinVoor, returns the sound wave travel time in microseconds
+  long durationVoor = pulseIn(echoPinVoor, HIGH);
+  // Calculating the distance
+  int distanceVoor= durationVoor*0.034/2;
+    
+  // Clears the trigPinRechts
+  digitalWrite(trigPinRechts, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinRechts on HIGH state for 10 micro seconds
+  digitalWrite(trigPinRechts, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinRechts, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  long durationRechts = pulseIn(echoPinRechts, HIGH);
+  // Calculating the distance
+  int distanceRechts= durationRechts*0.034/2;
+
+  
+  // voer de draai alleen uit als de afstandsensoren iets zien dat verder weg is dan test afstand
+  while((distanceVoor > 2) && (distanceLinks > 2) && (distanceRechts > 2)){
+    stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
+    stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
+    //calling run for both steppers to make them actualy run.
+    while(stepper1.isRunning() || stepper2.isRunning()){ 
+      stepper1.run();
+      stepper2.run();
+    //  if() fout{        moet nog test
+   //     run error;
+   //   }
+    }
+  }
+  while((distanceVoor <= 2) || (distanceLinks <= 2) || (distanceRechts <= 2)){
+    // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
   //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
-  if ((distanceVoor < 2) || (distanceLinks < 2) || (distanceRechts <2)){ 
     //Run the code that gets you unstuck, when you are free you'll break
-    while(true){
       //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
       // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
       // of these three numbers makes a unique number
@@ -134,30 +196,14 @@ void loop() {
    
     }  
   
-  }
-   
+  
 }
-
-
-
-// rotate functie opzet;
-void rotate(int graden){
-  if(error) return; //Breaks out of roation if there is an error
-  stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
-  stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
-  //calling run for both steppers to make them actualy run.
-  while(stepper1.isRunning() || stepper2.isRunning()){ 
-    stepper1.run();
-    stepper2.run();
-  }
-}
-
 
 
 void drive (int cm){
   if(error) return;
-  stepper1.move( round(cm * bandRadius) ); // het draaien van de linker stappenmotor klopt nog niet test
-  stepper2.move( round(cm * bandRadius) ); // het draaien van de rechter stappenmotor
+  stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor klopt nog niet test
+  stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
   //calling run for both steppers to make them actualy run.
   while(stepper1.isRunning() || stepper2.isRunning()){
     stepper1.run();
