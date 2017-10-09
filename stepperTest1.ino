@@ -54,8 +54,10 @@ void setup() {
 
 
 void loop() {
-  drive(input); // de afstandsensoren moeten nog in drive en rotate
+  
   rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
+
+  drive(input); // de afstandsensoren moeten nog in drive en rotate
 }
 
 
@@ -102,7 +104,7 @@ void drive (int cm){
   int distanceRechts= durationRechts*0.034/2;
 
 
- while((distanceVoor > 2) && (distanceLinks > 2) && (distanceRechts > 2)){
+ while((distanceVoor > 5) && (distanceLinks > 5) && (distanceRechts > 5)){
   stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
   stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
   //calling run for both steppers to make them actualy run.
@@ -112,7 +114,7 @@ void drive (int cm){
   }
  }
 
-  while((distanceVoor <= 2) || (distanceLinks <= 2) || (distanceRechts <= 2)){
+  while((distanceVoor <= 5) || (distanceLinks <= 5) || (distanceRechts <= 5)){
       // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
       //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
       //Run the code that gets you unstuck, when you are free you'll break
@@ -120,11 +122,14 @@ void drive (int cm){
       // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
       // of these three numbers makes a unique number
       int switchKey = 0;
-      if(distanceVoor < 3){switchKey += 2;}
-      if(distanceLinks < 3){switchKey += 3;}
-      if(distanceRechts < 3){switchKey += 4;}
+      if(distanceVoor <= 5){switchKey += 2;}
+      if(distanceLinks <= 5){switchKey += 3;}
+      if(distanceRechts <= 5){switchKey += 4;}
       switch (switchKey){
         case 2: // voor
+      //  rand() % 2;  random 0 of 1
+          stepper1.move(0); // beweging motor links
+          stepper2.move(0); // beweging motor rechts
           break;
           
         case 3: // links
