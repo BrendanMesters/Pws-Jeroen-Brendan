@@ -19,7 +19,7 @@
   const int echoPinRechts = 3;
 
 // const int's van de auto
-  const int bandRadius = 6.5*Pi; // omtrek van de band test;
+  const int bandRadius = 6.5*Pi; // omtrek van de band ;
   const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
   const int volledigeRotatieafstandWiel = 2*Pi*afstandWielDraaipunt; //De afstand die beide wielen afleggwen voor een voledig rondje om de AUTO zijn as;
   const int stappenPerRotatie = 4096; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het 4096 is);
@@ -54,10 +54,8 @@ void setup() {
 
 
 void loop() {
-  
-  rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
-
   drive(input); // de afstandsensoren moeten nog in drive en rotate
+  rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
 
 
@@ -112,8 +110,13 @@ void drive (int cm){
     stepper1.run();
     stepper2.run();
   }
+  //  if() fout{        moet nog test
+   //     run error;
+   //   }
  }
 
+while((distanceVoor > 5) && (distanceLinks > 5) && (distanceRechts > 5)){ // dit is test maar werkt nog niet
+Serial.println("hij neemt niks waar");}
   while((distanceVoor <= 5) || (distanceLinks <= 5) || (distanceRechts <= 5)){
       // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
       //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
@@ -121,33 +124,113 @@ void drive (int cm){
       //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
       // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
       // of these three numbers makes a unique number
+      
       int switchKey = 0;
+      
       if(distanceVoor <= 5){switchKey += 2;}
       if(distanceLinks <= 5){switchKey += 3;}
       if(distanceRechts <= 5){switchKey += 4;}
+      
       switch (switchKey){
+       
         case 2: // voor
       //  rand() % 2;  random 0 of 1
-          stepper1.move(0); // beweging motor links
-          stepper2.move(0); // beweging motor rechts
+          if (rand() % 2 == 0){
+            stepper1.move(90 * gradenNaarStappen); // beweging motor links
+            stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
+            while(stepper1.isRunning() || stepper2.isRunning()){
+              stepper1.run();
+              stepper2.run();
+            }
+          }
+          else{
+            stepper1.move(90 * -gradenNaarStappen); // beweging motor links
+            stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
+            while(stepper1.isRunning() || stepper2.isRunning()){
+              stepper1.run();
+              stepper2.run();
+            }
+          }
           break;
           
         case 3: // links
+        // zolang de afstand van links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden 
+          while ((distanceLinks <=5) && (distanceVoor > 5)){ 
+            stepper1.move( bandRadius *  stappenPerRotatie);
+            stepper2.move( bandRadius *  stappenPerRotatie);
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run();
+                stepper2.run();
+             }
+          }
           break;
         
         case 4: // rechts
+        // zolang de afstand van rechts kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden 
+          while ((distanceRechts <=5) && (distanceVoor > 5)){ 
+            stepper1.move( bandRadius *  stappenPerRotatie);
+            stepper2.move( bandRadius *  stappenPerRotatie);
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run();
+                stepper2.run();
+             }
+          }
           break;
         
-        case 5: // voor & links
+        case 5: // voor & links dus naar rechts draaien
+          stepper1.move(90 * gradenNaarStappen); // beweging motor links
+          stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
+            while(stepper1.isRunning() || stepper2.isRunning()){
+              stepper1.run();
+              stepper2.run();
+            }
           break;
         
         case 6: // voor & rechts
+          stepper1.move(90 * -gradenNaarStappen); // beweging motor links
+          stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
+            while(stepper1.isRunning() || stepper2.isRunning()){
+              stepper1.run();
+              stepper2.run();
+            }
           break;
         
         case 7: // links & rechts
+         // zolang de afstand van rechts en links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit of achteruit rijden 
+        while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor > 5)){ 
+             // ga naar achter of naar voren bij if naar achteren
+             if (rand() % 2 == 0){
+              stepper1.move( bandRadius *  -stappenPerRotatie);
+              stepper2.move( bandRadius *  -stappenPerRotatie);
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run();
+                stepper2.run();
+              }
+             }
+
+                         // ga naar voren
+            else {
+              stepper1.move( bandRadius *  stappenPerRotatie);
+              stepper2.move( bandRadius *  stappenPerRotatie);
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run();
+                stepper2.run();
+              }
+            }
+        }
           break;
         
         case 9: // voor & links & rechts
+        // ga naar achter zolang de afstand van alle 3 kleiner is dan 5 cm
+        while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor <= 5)){ 
+              stepper1.move( bandRadius *  -stappenPerRotatie);
+              stepper2.move( bandRadius *  -stappenPerRotatie);
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run();
+                stepper2.run();
+             }
+
+        }
           break;
         
         default: // glitch
