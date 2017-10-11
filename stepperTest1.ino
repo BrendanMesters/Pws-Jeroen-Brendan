@@ -8,6 +8,10 @@
 // Some of the 'weird' variables.
   const float Pi = 3.14;
   int error = false;
+  int distanceLinks = 10;
+  int distanceVoor = 10;
+  int distanceRechts = 10;
+
 
 // Afstandscencor pin definement
   const int trigPinLinks = A4;
@@ -24,7 +28,7 @@
   const int stappenPerRotatie = 4096; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het 4096 is);
   const int gradenNaarStappen = stappenPerRotatie/360; //het omrekenen van graden naar stappen, dus 180graden*gradenNaarStappen=2048 als stappenPerRotatie 4096 is;
   const int stappenNaarGraden = 360/stappenPerRotatie; // het omrekenen van stappen naar graden, gebruiken voor doorgeven aan pi hoeveel stappen er zijn gezet
-
+  
 AccelStepper stepper1(AccelStepper::HALF4WIRE, A0, A2, A1, A3); // motor links
 AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
 
@@ -56,7 +60,47 @@ void loop() {
   drive(input); // de afstandsensoren moeten nog in drive en rotate
   rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
-
+void sensor(){
+ //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
+  // Clears the trigPinLinks
+  digitalWrite(trigPinLinks, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinLinks on HIGH state for 10 micro seconds
+  digitalWrite(trigPinLinks, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinLinks, LOW);
+  // Reads the echoPinLinks, returns the sound wave travel time in microseconds
+  long durationLinks = pulseIn(echoPinLinks, HIGH);
+  // Calculating the distance
+  distanceLinks= durationLinks*0.034/2; 
+ 
+    
+  // Clears the trigPinVoor
+  digitalWrite(trigPinVoor, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinVoor on HIGH state for 10 micro seconds
+  digitalWrite(trigPinVoor, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinVoor, LOW);
+  // Reads the echoPinVoor, returns the sound wave travel time in microseconds
+  long durationVoor = pulseIn(echoPinVoor, HIGH);
+  // Calculating the distance
+  distanceVoor= durationVoor*0.034/2; 
+ 
+  // Clears the trigPinRechts
+  digitalWrite(trigPinRechts, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinRechts on HIGH state for 10 micro seconds
+  digitalWrite(trigPinRechts, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinRechts, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  long durationRechts = pulseIn(echoPinRechts, HIGH);
+  // Calculating the distance
+  distanceRechts= durationRechts*0.034/2; 
+  
+  
+}
 
 void drive (int cm){
   if(error) return;
@@ -92,13 +136,15 @@ void rotate(int graden){
     stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
     stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
     //calling run for both steppers to make them actualy run.
-    int i = 0;
+    int i = 10;
     while(stepper1.isRunning() || stepper2.isRunning()){
       stepper1.run();
       stepper2.run();
       if(i % 10 == 0){
         obstakelOntwijking();
+        Serial.print("i is");
         Serial.println(i);
+        i = 0;
       }
       i++;
     }
@@ -116,58 +162,20 @@ void obstakelOntwijking(){
   //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
   // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
   // of these three numbers makes a unique number
-  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
-  // Clears the trigPinLinks
-  digitalWrite(trigPinLinks, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinLinks on HIGH state for 10 micro seconds
-  digitalWrite(trigPinLinks, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinLinks, LOW);
-  // Reads the echoPinLinks, returns the sound wave travel time in microseconds
-  long durationLinks = pulseIn(echoPinLinks, HIGH);
-  // Calculating the distance
-  int distanceLinks= durationLinks*0.034/2; 
-  if(distanceLinks <= 5){
-    obstakelOntwijking();
-  }
-    
-  // Clears the trigPinVoor
-  digitalWrite(trigPinVoor, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinVoor on HIGH state for 10 micro seconds
-  digitalWrite(trigPinVoor, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinVoor, LOW);
-  // Reads the echoPinVoor, returns the sound wave travel time in microseconds
-  long durationVoor = pulseIn(echoPinVoor, HIGH);
-  // Calculating the distance
-  int distanceVoor= durationVoor*0.034/2; 
-  if(distanceVoor <= 5){
-    obstakelOntwijking();
-  }
-    
-  // Clears the trigPinRechts
-  digitalWrite(trigPinRechts, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinRechts on HIGH state for 10 micro seconds
-  digitalWrite(trigPinRechts, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinRechts, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  long durationRechts = pulseIn(echoPinRechts, HIGH);
-  // Calculating the distance
-  int distanceRechts= durationRechts*0.034/2; 
-  if(distanceRechts <= 5){
-    obstakelOntwijking();
-  }
   
   int switchKey = 0; // moet nog alle cases nagaan test
-      
+  sensor();   
   if(distanceVoor <= 5){switchKey += 2;}
   if(distanceLinks <= 5){switchKey += 3;}
   if(distanceRechts <= 5){switchKey += 4;}
-      
+  Serial.print("switchKey is");
+  Serial.println(switchKey);   
+  Serial.print("voor is");
+  Serial.println(distanceVoor);
+  Serial.print("links is");
+  Serial.println(distanceLinks);
+  Serial.print("rechts is");
+  Serial.println(distanceRechts); 
   switch (switchKey){  
     case 0:
       return;  
@@ -177,10 +185,19 @@ void obstakelOntwijking(){
             stepper1.move(90 * gradenNaarStappen); // beweging motor links
             stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
             while(stepper1.isRunning() || stepper2.isRunning()){
-              stepper1.run();
+              stepper1.run(); 
               stepper2.run();
+              sensor();
+              if (distanceVoor <= 2){
+                stepper1.move( bandRadius *  -stappenPerRotatie);
+                stepper2.move( bandRadius *  -stappenPerRotatie);
+                while(stepper1.isRunning() || stepper2.isRunning()){
+                  stepper1.run();
+                  stepper2.run();
+             }
+              }             
             }
-          }
+           }
     else{
             stepper1.move(90 * -gradenNaarStappen); // beweging motor links
             stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
