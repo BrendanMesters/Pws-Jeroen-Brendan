@@ -1,4 +1,3 @@
-
 //als je iets terug wilt zien van je programma gebruik je Serial.println('Hier is je bericht');
 //Berekeningen worden in CM gemaakt
 
@@ -19,7 +18,7 @@
   const int echoPinRechts = 3;
 
 // const int's van de auto
-  const int bandRadius = 6.5*Pi; // omtrek van de band ;
+  const float bandRadius = 6.5*Pi; // omtrek van de band ;
   const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
   const int volledigeRotatieafstandWiel = 2*Pi*afstandWielDraaipunt; //De afstand die beide wielen afleggwen voor een voledig rondje om de AUTO zijn as;
   const int stappenPerRotatie = 4096; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het 4096 is);
@@ -30,8 +29,8 @@ AccelStepper stepper1(AccelStepper::HALF4WIRE, A0, A2, A1, A3); // motor links
 AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
 
 // temp variables
-  int inputR = 20; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
-  int input = 80; //this is a temporary testing variable resembles the pi's input going forward(in cm).
+  int inputR = 10; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
+  int input = 10; //this is a temporary testing variable resembles the pi's input going forward(in cm).
 
 
 
@@ -41,7 +40,7 @@ void setup() {
     stepper1.setMaxSpeed(5000); // motor links max stappen per sec
     stepper2.setMaxSpeed(5000); // motor rechts max stappen per sec
 
-  //setup afsandsensor
+  //setup afsandsensoren
   //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
     pinMode(trigPinLinks, OUTPUT); // Sets the trigPinLinks as an Output
     pinMode(echoPinLinks, INPUT); // Sets the echoPinLinks as an Input
@@ -59,11 +58,64 @@ void loop() {
 }
 
 
-
 void drive (int cm){
   if(error) return;
 
+    stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
+    stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+    //calling run for both steppers to make them actualy run.
+    int i = 10;
+    while(stepper1.isRunning() || stepper2.isRunning()){
+      stepper1.run();
+      stepper2.run();
+      if(i % 10 == 0){
+        obstakelOntwijking();
+        Serial.println(i);
+      }
+      i++;
+    }
+      //check cencoren
+     // (inconcoren) als fout run switch case
+   // }
+  //  if() fout{        moet nog test
+   //     run error;
+   //   }
+}
 
+
+
+// rotate functie opzet;
+void rotate(int graden){
+  if(error) return; //Breaks out of roation if there is an error
+  // voer de draai alleen uit als de afstandsensoren iets zien dat verder weg is dan test afstand
+ 
+    stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
+    stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
+    //calling run for both steppers to make them actualy run.
+    int i = 0;
+    while(stepper1.isRunning() || stepper2.isRunning()){
+      stepper1.run();
+      stepper2.run();
+      if(i % 10 == 0){
+        obstakelOntwijking();
+        Serial.println(i);
+      }
+      i++;
+    }
+    //  if() fout{        moet nog test
+   //     run error;
+   //   }
+  }
+
+
+void obstakelOntwijking(){
+ 
+  // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
+  //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
+  //Run the code that gets you unstuck, when you are free you'll break
+  //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
+  // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
+  // of these three numbers makes a unique number
   //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
   // Clears the trigPinLinks
   digitalWrite(trigPinLinks, LOW);
@@ -75,7 +127,10 @@ void drive (int cm){
   // Reads the echoPinLinks, returns the sound wave travel time in microseconds
   long durationLinks = pulseIn(echoPinLinks, HIGH);
   // Calculating the distance
-  int distanceLinks= durationLinks*0.034/2;
+  int distanceLinks= durationLinks*0.034/2; 
+  if(distanceLinks <= 5){
+    obstakelOntwijking();
+  }
     
   // Clears the trigPinVoor
   digitalWrite(trigPinVoor, LOW);
@@ -87,7 +142,10 @@ void drive (int cm){
   // Reads the echoPinVoor, returns the sound wave travel time in microseconds
   long durationVoor = pulseIn(echoPinVoor, HIGH);
   // Calculating the distance
-  int distanceVoor= durationVoor*0.034/2;
+  int distanceVoor= durationVoor*0.034/2; 
+  if(distanceVoor <= 5){
+    obstakelOntwijking();
+  }
     
   // Clears the trigPinRechts
   digitalWrite(trigPinRechts, LOW);
@@ -99,41 +157,21 @@ void drive (int cm){
   // Reads the echoPin, returns the sound wave travel time in microseconds
   long durationRechts = pulseIn(echoPinRechts, HIGH);
   // Calculating the distance
-  int distanceRechts= durationRechts*0.034/2;
-
-
- while((distanceVoor > 5) && (distanceLinks > 5) && (distanceRechts > 5)){
-  stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
-  stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
-  //calling run for both steppers to make them actualy run.
-  while(stepper1.isRunning() || stepper2.isRunning()){
-    stepper1.run();
-    stepper2.run();
+  int distanceRechts= durationRechts*0.034/2; 
+  if(distanceRechts <= 5){
+    obstakelOntwijking();
   }
-  //  if() fout{        moet nog test
-   //     run error;
-   //   }
- }
-
-while((distanceVoor > 5) && (distanceLinks > 5) && (distanceRechts > 5)){ // dit is test maar werkt nog niet
-Serial.println("hij neemt niks waar");}
-  while((distanceVoor <= 5) || (distanceLinks <= 5) || (distanceRechts <= 5)){
-      // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
-      //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
-      //Run the code that gets you unstuck, when you are free you'll break
-      //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
-      // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
-      // of these three numbers makes a unique number
+  
+  int switchKey = 0; // moet nog alle cases nagaan test
       
-      int switchKey = 0;
+  if(distanceVoor <= 5){switchKey += 2;}
+  if(distanceLinks <= 5){switchKey += 3;}
+  if(distanceRechts <= 5){switchKey += 4;}
       
-      if(distanceVoor <= 5){switchKey += 2;}
-      if(distanceLinks <= 5){switchKey += 3;}
-      if(distanceRechts <= 5){switchKey += 4;}
-      
-      switch (switchKey){
-       
-        case 2: // voor
+  switch (switchKey){  
+    case 0:
+      return;  
+    case 2: // voor
       //  rand() % 2;  random 0 of 1
           if (rand() % 2 == 0){
             stepper1.move(90 * gradenNaarStappen); // beweging motor links
@@ -143,7 +181,7 @@ Serial.println("hij neemt niks waar");}
               stepper2.run();
             }
           }
-          else{
+    else{
             stepper1.move(90 * -gradenNaarStappen); // beweging motor links
             stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
             while(stepper1.isRunning() || stepper2.isRunning()){
@@ -153,7 +191,7 @@ Serial.println("hij neemt niks waar");}
           }
           break;
           
-        case 3: // links
+    case 3: // links
         // zolang de afstand van links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden 
           while ((distanceLinks <=5) && (distanceVoor > 5)){ 
             stepper1.move( bandRadius *  stappenPerRotatie);
@@ -165,7 +203,7 @@ Serial.println("hij neemt niks waar");}
           }
           break;
         
-        case 4: // rechts
+    case 4: // rechts
         // zolang de afstand van rechts kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden 
           while ((distanceRechts <=5) && (distanceVoor > 5)){ 
             stepper1.move( bandRadius *  stappenPerRotatie);
@@ -177,7 +215,7 @@ Serial.println("hij neemt niks waar");}
           }
           break;
         
-        case 5: // voor & links dus naar rechts draaien
+    case 5: // voor & links dus naar rechts draaien
           stepper1.move(90 * gradenNaarStappen); // beweging motor links
           stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
             while(stepper1.isRunning() || stepper2.isRunning()){
@@ -186,7 +224,7 @@ Serial.println("hij neemt niks waar");}
             }
           break;
         
-        case 6: // voor & rechts
+     case 6: // voor & rechts
           stepper1.move(90 * -gradenNaarStappen); // beweging motor links
           stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
             while(stepper1.isRunning() || stepper2.isRunning()){
@@ -195,7 +233,7 @@ Serial.println("hij neemt niks waar");}
             }
           break;
         
-        case 7: // links & rechts
+     case 7: // links & rechts
          // zolang de afstand van rechts en links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit of achteruit rijden 
         while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor > 5)){ 
              // ga naar achter of naar voren bij if naar achteren
@@ -228,7 +266,7 @@ Serial.println("hij neemt niks waar");}
               while(stepper1.isRunning() || stepper2.isRunning()){
                 stepper1.run();
                 stepper2.run();
-             }
+              }
 
         }
           break;
@@ -236,111 +274,6 @@ Serial.println("hij neemt niks waar");}
         default: // glitch
           break;
       }
-   
-    }
 
- 
 }
-
-
-
-// rotate functie opzet;
-void rotate(int graden){
-  if(error) return; //Breaks out of roation if there is an error
-
-
-  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
-  // Clears the trigPinLinks
-  digitalWrite(trigPinLinks, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinLinks on HIGH state for 10 micro seconds
-  digitalWrite(trigPinLinks, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinLinks, LOW);
-  // Reads the echoPinLinks, returns the sound wave travel time in microseconds
-  long durationLinks = pulseIn(echoPinLinks, HIGH);
-  // Calculating the distance
-  int distanceLinks= durationLinks*0.034/2;
-    
-  // Clears the trigPinVoor
-  digitalWrite(trigPinVoor, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinVoor on HIGH state for 10 micro seconds
-  digitalWrite(trigPinVoor, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinVoor, LOW);
-  // Reads the echoPinVoor, returns the sound wave travel time in microseconds
-  long durationVoor = pulseIn(echoPinVoor, HIGH);
-  // Calculating the distance
-  int distanceVoor= durationVoor*0.034/2;
-    
-  // Clears the trigPinRechts
-  digitalWrite(trigPinRechts, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPinRechts on HIGH state for 10 micro seconds
-  digitalWrite(trigPinRechts, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPinRechts, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  long durationRechts = pulseIn(echoPinRechts, HIGH);
-  // Calculating the distance
-  int distanceRechts= durationRechts*0.034/2;
-
-  
-  // voer de draai alleen uit als de afstandsensoren iets zien dat verder weg is dan test afstand
-  while((distanceVoor > 2) && (distanceLinks > 2) && (distanceRechts > 2)){
-    stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
-    stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
-    //calling run for both steppers to make them actualy run.
-    while(stepper1.isRunning() || stepper2.isRunning()){ 
-      stepper1.run();
-      stepper2.run();
-    //  if() fout{        moet nog test
-   //     run error;
-   //   }
-    }
-  }
-  while((distanceVoor <= 2) || (distanceLinks <= 2) || (distanceRechts <= 2)){
-      // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
-      //hier moet ik er voor zorgen dat de loop stopt en dat hij een ander pad gaat kiezen 
-      //Run the code that gets you unstuck, when you are free you'll break
-      //switchKey is a variable that is used to easily get the case function to know if eighter the front, the left or the right,
-      // or a combination of these three is to close to a surface, we use the numbers 2, 3 and 4 because anny addition,
-      // of these three numbers makes a unique number
-      int switchKey = 0;
-      if(distanceVoor < 3){switchKey += 2;}
-      if(distanceLinks < 3){switchKey += 3;}
-      if(distanceRechts < 3){switchKey += 4;}
-      switch (switchKey){
-        case 2: // voor
-          break;
-          
-        case 3: // links
-          break;
-        
-        case 4: // rechts
-          break;
-        
-        case 5: // voor & links
-          break;
-        
-        case 6: // voor & rechts
-          break;
-        
-        case 7: // links & rechts
-          break;
-        
-        case 9: // voor & links & rechts
-          break;
-        
-        default: // glitch
-          break;
-      }
-   
-    }  
-  
-  
-}
-
-
 
