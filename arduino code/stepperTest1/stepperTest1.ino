@@ -72,7 +72,7 @@ void sensor(){
   // Reads the echoPinLinks, returns the sound wave travel time in microseconds
   long durationLinks = pulseIn(echoPinLinks, HIGH);
   // Calculating the distance
-  distanceLinks= durationLinks*0.034/2; 
+  distanceLinks = durationLinks*0.034/2; 
  
     
   // Clears the trigPinVoor
@@ -85,7 +85,7 @@ void sensor(){
   // Reads the echoPinVoor, returns the sound wave travel time in microseconds
   long durationVoor = pulseIn(echoPinVoor, HIGH);
   // Calculating the distance
-  distanceVoor= durationVoor*0.034/2; 
+  distanceVoor = durationVoor*0.034/2; 
  
   // Clears the trigPinRechts
   digitalWrite(trigPinRechts, LOW);
@@ -97,7 +97,7 @@ void sensor(){
   // Reads the echoPin, returns the sound wave travel time in microseconds
   long durationRechts = pulseIn(echoPinRechts, HIGH);
   // Calculating the distance
-  distanceRechts= durationRechts*0.034/2; 
+  distanceRechts = durationRechts*0.034/2; 
   
   
 }
