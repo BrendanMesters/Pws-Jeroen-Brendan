@@ -5,6 +5,7 @@
 
 
 boolean error;
+int test;
 
 #define WITH_ERRORS
 
@@ -17,6 +18,8 @@ boolean error;
 void setup() {
   //Put your setup code here, to run once:
   Serial.begin(9600);
+
+  pinMode(A1, OUTPUT);
   
 }
 
@@ -42,9 +45,7 @@ void mainComunication() {  //Used to talk with an other devise
     char chr = str.charAt(0);  //Saves the first character of the string in chr.
     str.remove(0, 1);  //Removes the first character from str.
     procesCommand(chr, str);
-    if (error) {
-      return;
-    }
+    if (error) return;
   }
 }
 
@@ -56,15 +57,20 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
       
     case 'R':  //Rotate
       float var;
- //     var = stringToVariable(str);
-      var = str.toFloat();
-      if (error) {
-        return;
-      }
+      var = stringToVariable(str);
+ //     var = str.toFloat();
+      if (error) return;
       Serial.println(var);
       break;
       
     case 'T':  //Test
+      if (test == 0){
+        digitalWrite(A1, HIGH);
+        test = 1;
+      } else{
+        digitalWrite(A1, LOW);
+        test = 0;
+      }
       break;
       
     default:
@@ -76,9 +82,15 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
 }
 
 float stringToVariable(String &str) {
-  float returnVal = 0;  //Make a return value variable
+  float returnVal;  //Make a return value variable
   boolean decimalPoint = false;
   int decimalPlace = 1;
+  if (str.length() == 0) {
+    error = true;
+    ERRORPRINT("No variables for rotation command.");
+    return -1;
+  }
+  
   
   while (str.length() > 0) {  //A weird way to convert our string into an interger we want
     
@@ -112,5 +124,6 @@ float stringToVariable(String &str) {
     str.remove(0,1);
     
   }
+  
   return returnVal;
 }
