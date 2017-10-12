@@ -13,6 +13,7 @@ Arduino sends the sonar cencor information to me as a part of a a circle
 """
 import serial
 import time
+import math
 
 
 ser = serial.Serial('/dev/cu.usbmodem621')
@@ -27,6 +28,7 @@ def read():
     bitString = ser.read(ser.in_waiting)
     retVal = str(bitString.strip())
     retVal = retVal[2:-1]
+    return retVal
 
 def write(command = False, variable = False):
     assert (type(command) == str) and (type(variable) == int), 'Wrong/No input'
@@ -38,6 +40,7 @@ class matrix:
     en 2 is onbekend.
     !!!(2, 5) is de tweede rij en de vijfde colom!!!
     !!! colom telt van boven naar beneden, rij telt van links naar rechts!!!
+    each pixel is one square cm
     """
     
     def __init__(self, rows = 10, colls = 10):
@@ -49,15 +52,15 @@ class matrix:
             
     def _add(self, location = 0): #    0 = top; 1 = right; 2 = bot; 3 = left.
         if location = 0: #top
-            matrixRC.insert(0, [2 for _ in range( len( matrixRC(0) ) ) ] )                          
-        elif location = 1: #right
-            for i in range(len(matrixRC)):
-                matrixRC[i].append(2)           
-        elif location = 2: #bottom
-            matrixRC.append([2 for _ in range( len( matrixRC(0) ) ) ])
-        elif location = 3: #left
             for i in range(len(matrixRC)):
                 matrixRC[i].insert(0, 2)
+        elif location = 1: #right
+            matrixRC.append([2 for _ in range( len( matrixRC(0) ) ) ])                      
+        elif location = 2: #bottom
+            for i in range(len(matrixRC)):
+                matrixRC[i].append(2)
+        elif location = 3: #left
+            matrixRC.insert(0, [2 for _ in range( len( matrixRC(0) ) ) ] )
         else
             raise Exception('Wrong value for _add function in matrix, expected location to be between 0 and 3 got', location)
 
@@ -69,7 +72,6 @@ class matrix:
         return len(matrixRC)
 
 
-        
 
 
 class Auto:
@@ -81,7 +83,38 @@ class Auto:
     (er is een blaadje waar dit allemaal op staat uitgebeeld, Jeroen
     heeft dr ook nog een foto van.)"""
 
- #5   def __init__(self):
- #       create matrix
-#        !!Incomplete code!!
+    def __init__(self):
+        self.map = matrix(40, 40)
+        self.location = (20, 20)
+
+
+    def _verwerkenNieuweInfo(self):
+        data = str()
+        dataList = list()
+        deltaLocaties = list()
+        while True: #getting the data
+            data +=  read()
+            if data(-2:) = 'OK':
+                break
+        char = ''
+        for i in range(len(data)): #changing data into a list
+            char += data[-i]
+            if data[-i] = , and char != '':#!!! het teken dat hier staat wordt gebruikt om de meet resultaten te scheiden!!!
+                dataList.insert(0, char)
+            elif data[-i] != ,:
+                char.insert(0, data[-i])
+        hoek = (len(dataList) / 360)
+        for i, lengte in enumerate(datalist)
+            if lengte <= 70:
+                deltaLocaties.append((sin(i*hoek) * lengte, cos(i*hoek) * lengte))
+        retval = matrix(141, 141) #71, 71 is the center point
+        
+        
+        
+
+        
+
+        
+        math.sin(hoek) * data = deltaX
+        math.cos(hoek) * data = deltaY
     
