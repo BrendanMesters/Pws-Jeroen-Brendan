@@ -246,8 +246,6 @@ void obstakelOntwijking(){
              while(stepper1.isRunning() || stepper2.isRunning()){
                stepper1.run();
                stepper2.run();
-               sensor();
-               if (distanceVoor <= 5){break;}// weet niet of het ooit nodig is maar toch voor de zekerheid test
              }
              stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
              stepper2.move(90 * gradenNaarStappen); //motor rechts
@@ -282,8 +280,6 @@ void obstakelOntwijking(){
              while(stepper1.isRunning() || stepper2.isRunning()){
                stepper1.run();
                stepper2.run();
-               sensor();
-               if (distanceVoor <= 5){break;}// weet niet of het ooit nodig is maar toch voor de zekerheid test
              }
              stepper1.move(90 * gradenNaarStappen); //motor links; paralel krijgen
              stepper2.move(90 * -gradenNaarStappen); //motor rechts
