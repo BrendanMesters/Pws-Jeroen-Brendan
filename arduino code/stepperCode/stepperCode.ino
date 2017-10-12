@@ -8,9 +8,9 @@
 // Some of the 'weird' variables.
   const float Pi = 3.14;
   int error = false;
-  int distanceLinks = 10;
-  int distanceVoor = 10;
-  int distanceRechts = 10;
+  int distanceLinks;
+  int distanceVoor;
+  int distanceRechts;
 
 
 // Afstandscencor pin definement
@@ -191,10 +191,12 @@ void obstakelOntwijking(){
               if (distanceVoor <= 2){
                 stepper1.move( bandRadius *  -stappenPerRotatie);
                 stepper2.move( bandRadius *  -stappenPerRotatie);
+                Serial.print("voor is");
+                Serial.println(distanceVoor);
                 while(stepper1.isRunning() || stepper2.isRunning()){
                   stepper1.run();
                   stepper2.run();
-             }
+                }
               }             
             }
            }
@@ -204,6 +206,17 @@ void obstakelOntwijking(){
             while(stepper1.isRunning() || stepper2.isRunning()){
               stepper1.run();
               stepper2.run();
+              sensor();
+              if (distanceVoor <= 2){
+                stepper1.move( bandRadius *  -stappenPerRotatie);
+                stepper2.move( bandRadius *  -stappenPerRotatie);
+                Serial.print("voor is");
+                Serial.println(distanceVoor);
+                while(stepper1.isRunning() || stepper2.isRunning()){
+                  stepper1.run();
+                  stepper2.run();
+                }
+              }
             }
           }
           break;
