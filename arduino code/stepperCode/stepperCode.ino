@@ -114,6 +114,7 @@ void drive (int cm){
       stepper2.run();
       if(i % 10 == 0){
         obstakelOntwijking();
+        Serial.print("i  ");
         Serial.println(i);
       }
       i++;
@@ -226,6 +227,13 @@ void obstakelOntwijking(){
           while ((distanceLinks <=5) && (distanceVoor > 5)){ 
             stepper1.move( bandRadius *  stappenPerRotatie);
             stepper2.move( bandRadius *  stappenPerRotatie);
+            sensor();
+            if(distanceLinks <= 2){
+             stepper1.move( bandRadius *  -stappenPerRotatie);
+             stepper2.move( bandRadius *  -stappenPerRotatie); 
+             stepper1.move(90 * gradenNaarStappen); // beweging motor links
+             stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts  
+            }
               while(stepper1.isRunning() || stepper2.isRunning()){
                 stepper1.run();
                 stepper2.run();
