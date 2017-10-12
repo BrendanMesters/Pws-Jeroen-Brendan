@@ -251,9 +251,9 @@ void obstakelOntwijking(){
              }
              stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
              stepper2.move(90 * gradenNaarStappen); //motor rechts
-             while(stepper1.isRunning() || stepper2.isRunning()){
+             while(stepper1.isRunning() || stepper2.isRunning()){ // kunnen we hier geen void van maken om code te besparen???
                stepper1.run();
-               stepper2.run();
+               stepper2.run(); 
              }
             }
           }
@@ -269,12 +269,27 @@ void obstakelOntwijking(){
              int punt2R = stepper1.currentPosition();
              int afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos(30)  
              int teDraaienHoek = 1 / (tan(afgelegdeAfstand/2)); // bereken de te draaien hoek
-             stepper1.move(teDraaienHoek * -gradenNaarStappen); //motor links
-             stepper2.move(teDraaienHoek * gradenNaarStappen); //motor rechts
+             // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
+             stepper1.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
+             stepper2.move((teDraaienHoek + 90) * gradenNaarStappen); //motor rechts
+             while(stepper1.isRunning() || stepper2.isRunning()){
+               stepper1.run();
+               stepper2.run();
+             }
+             stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; 3cm van de muur af rijden
+             stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
              //hierna moet hij nog wat doen om niet steed 3/cos(30) cm dicht bij de muur te zijn
              while(stepper1.isRunning() || stepper2.isRunning()){
                stepper1.run();
                stepper2.run();
+               sensor();
+               if (distanceVoor <= 5){break;}// weet niet of het ooit nodig is maar toch voor de zekerheid test
+             }
+             stepper1.move(90 * gradenNaarStappen); //motor links; paralel krijgen
+             stepper2.move(90 * -gradenNaarStappen); //motor rechts
+             while(stepper1.isRunning() || stepper2.isRunning()){ // kunnen we hier geen void van maken om code te besparen???
+               stepper1.run();
+               stepper2.run(); 
              }
             }
           }
