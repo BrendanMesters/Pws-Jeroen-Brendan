@@ -5,6 +5,8 @@
 
 #include <AccelStepper.h>
 
+
+
 #define WITH_ERRORS
 
 #ifdef WITH_ERRORS
@@ -13,9 +15,11 @@
 #define ERRORPRINT(v)
 #endif
 
+
+
 // Some of the 'weird' variables.
   const float Pi = 3.14;
-  boolean error = false;
+  int error = false;
   int distanceLinks;
   int distanceVoor;
   int distanceRechts;
@@ -64,11 +68,9 @@ void setup() {
 
 
 
-
-
 void loop() {
-
-  mainCommunication();
+  drive(input); // de afstandsensoren moeten nog in drive en rotate
+  rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
 void sensor(){
  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
@@ -364,11 +366,9 @@ void obstakelOntwijking(){
 }
 
 
-<<<<<<< HEAD
+// Brendan zijn code beneden
 
-// BRENDAN CODE HIER ONDER!!!
-
-void mainCommunication() {  //Used to talk with an other devise
+void mainComunication() {  //Used to talk with an other devise
   while(!Serial.available()){}  //Waits for a message
   error = false;
 
@@ -381,6 +381,8 @@ void mainCommunication() {  //Used to talk with an other devise
     if (error) return;
   }
 }
+
+
 
 float stringToVariable(String &str) {
   float returnVal;  //Make a return value variable
@@ -429,17 +431,21 @@ float stringToVariable(String &str) {
   return returnVal;
 }
 
+
+
 void procesCommand(char chr, String &str) {  //Check what command he has to execute and does it.
+  float var;
   if(str != ""){
-    float var = stringToVariable(str);
+    var = stringToVariable(str);
   }
+  
   switch(chr){
-    case 'D':  //drive
-      drive(var);
+    case 'D':  //Drive
+      drive(var); 
       break;
       
     case 'R':  //Rotate
-      rotate(var);
+      rotare(var);
       break;
       
     case 'T':  //Test
@@ -453,12 +459,3 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
   }
   str.remove(0);
 }
-
-D12
-=======
-oud = new
-new = leesaf()
-if oud >5 && nieuw is <= 5:
-
->>>>>>> 26b3fa422a8dde8edc9b2796fbca9b3727aad255
-
