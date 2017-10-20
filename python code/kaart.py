@@ -10,6 +10,8 @@ class Kaart:
     """
     
     def __init__(self, rows = 10, colls = 10):
+    	self.rows = rows
+    	self.colls = colls
         self.matrixRC = []
         for _ in range(rows):
             self.matrixRC.append([2 for _ in range(colls)])
@@ -37,7 +39,7 @@ class Kaart:
             raise Exception('Wrong value for _add function in matrix, expected location to be between 0 and 3 got', location)
 
 
-    def distance(self, x1, y1, x2, y2):
+    def _distance(self, x1, y1, x2, y2):
         return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
 
 
@@ -54,12 +56,16 @@ class Kaart:
     
 
     def how_far_line(self, x, y, angle):
-        retVal, new = 0, 0
-        a = math.tan(angle)
-        ietsVakjes = [(X, Y) for X in range(3) for Y in range(3) if self.matrixRC[X][Y] == 1]
+    	retVal = None
+        a = math.cos(angle)
+        ietsVakjes = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 1]
+        print(ietsVakjes)
         for vakje in ietsVakjes:
             if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1):
-                retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
+            	print(vakje)
+            	if retVal != None: retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
+            	else: retVal = self._distance(x, y, vakje[0], vakje[1])
+        return retVal
 
         
         
