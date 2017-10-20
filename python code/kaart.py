@@ -1,3 +1,5 @@
+import math
+Pi = math.pi
 
 class Kaart:
     """ een matrix die de kaart van de auto aan gaat geven 0 is niets, 1 is iets
@@ -12,6 +14,12 @@ class Kaart:
         for _ in range(rows):
             self.matrixRC.append([2 for _ in range(colls)])
 
+
+    def __str__(self):
+        retVal = '\n'.join(''.join(map(str, row)) for row in self.matrixRC)
+        for index, new in enumerate((' ', '#', '?')):
+            retVal = retVal.replace(str(index), new)
+        return retVal
 
             
     def _add(self, location = 0): #    0 = top; 1 = right; 2 = bot; 3 = left.
@@ -29,9 +37,41 @@ class Kaart:
             raise Exception('Wrong value for _add function in matrix, expected location to be between 0 and 3 got', location)
 
 
-    def hoeHoog(self):
+    def distance(self, x1, y1, x2, y2):
+        return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
+
+
+    def how_high(self):
         return len(self.matrixRC[0])
 
-    def hoeBreed(self):
+    def how_wide(self):
         return len(self.matrixRC)
+
+
+    def beam(self, x, y, angle, distance):
+        pass
+
+    
+
+    def how_far_line(self, x, y, angle):
+        retVal, new = 0, 0
+        a = math.tan(angle)
+        ietsVakjes = [(X, Y) for X in range(3) for Y in range(3) if self.matrixRC[X][Y] == 1]
+        for vakje in ietsVakjes:
+            if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1):
+                retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
+
+        
+        
+        
+    def how_far_free(self, x, y, angle):
+        pass
+
+    def nearest_unknown(self, x, y):
+        unknownLocations = [(X, Y) for X in range(3) for Y in range(3) if self.matrixRC[X][Y] == 2]
+        
+
+
+    def combine(self, other, locationDefinement):
+        pass
 
