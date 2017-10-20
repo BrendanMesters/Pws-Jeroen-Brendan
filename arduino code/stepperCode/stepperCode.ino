@@ -347,6 +347,34 @@ void obstakelOntwijking(){
         
      case 7: // links & rechts
          // zolang de afstand van rechts en links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit of achteruit rijden 
+         if((distanceLinks >=(3/cos(30/ 180 * Pi))) && (distanceRechts >=(3/cos(30/ 180 * Pi)))) {switchKeyCase7 += 3;}
+         if(distanceLinks <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 4;}
+         if(distanceRechts <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 5;}
+          switch(switchKeyCase7){
+            case 3: // nog groter dan 3 maar kleiner dan 5
+            
+
+            break;
+            
+            case 4: // links kleiner dan 3
+
+            break;
+            
+            case 5: // rechts kleiner dan 3
+
+            break;
+
+            case 9: // links en rechts kleiner dan 3
+
+
+            default; // glitch
+            break;
+
+
+                   
+          }
+            
+        
         while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor > 5)){ 
              // ga naar achter of naar voren bij if naar achteren
              if (rand() % 2 == 0){
@@ -387,8 +415,8 @@ void obstakelOntwijking(){
           break;
       }
 
+  }
 }
-
 
 // Brendan zijn code beneden
 
