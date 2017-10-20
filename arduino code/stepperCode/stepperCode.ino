@@ -243,11 +243,11 @@ void obstakelOntwijking(){
             stepper2.move( bandRadius *  stappenPerRotatie);
             while ((stepper1.isRunning()) || (stepper2.isRunning())){
               sensor();
-              Serial.print("voor is ");
+              Serial.print("case 3 voor is ");
               Serial.println(distanceVoor);
-              Serial.print("links is ");
+              Serial.print("case 3 links is ");
               Serial.println(distanceLinks);
-              Serial.print("rechts is ");
+              Serial.print("case 3 rechts is ");
               Serial.println(distanceRechts); 
               stepper1.run();
               stepper2.run();
@@ -289,11 +289,11 @@ void obstakelOntwijking(){
             stepper2.move( bandRadius *  stappenPerRotatie);
             while ((stepper1.isRunning()) || (stepper2.isRunning())){
               sensor();
-              Serial.print("voor is ");
+              Serial.print("case 4 voor is ");
               Serial.println(distanceVoor);
-              Serial.print("links is ");
+              Serial.print("case 4 links is ");
               Serial.println(distanceLinks);
-              Serial.print("rechts is ");
+              Serial.print("case 4 rechts is ");
               Serial.println(distanceRechts); 
               stepper1.run();
               stepper2.run();
@@ -347,13 +347,41 @@ void obstakelOntwijking(){
         
      case 7: // links & rechts
          // zolang de afstand van rechts en links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit of achteruit rijden 
+         int switchKeyCase7;
+         int punt2L;
+         int punt2R;
+         switchKeyCase7 = 0;
+         punt2L = 0;
+         punt2R = 0;
+  
          if((distanceLinks >=(3/cos(30/ 180 * Pi))) && (distanceRechts >=(3/cos(30/ 180 * Pi)))) {switchKeyCase7 += 3;}
          if(distanceLinks <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 4;}
          if(distanceRechts <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 5;}
           switch(switchKeyCase7){
             case 3: // nog groter dan 3 maar kleiner dan 5
-            
-
+              stepper1.move( bandRadius *  -stappenPerRotatie); // beweging motor links
+              stepper2.move( bandRadius *  -stappenPerRotatie); // beweging motor rechts
+              while(stepper1.isRunning() || stepper2.isRunning()){
+                stepper1.run(); 
+                stepper2.run();
+                sensor();
+                Serial.print("case 7 voor is ");
+                Serial.println(distanceVoor);
+                Serial.print("case 7 links is ");
+                Serial.println(distanceLinks);
+                Serial.print("case 7 rechts is ");
+                Serial.println(distanceRechts); 
+                if (distanceLinks <= 3){
+                  // de positie van de motor om de hoek te berekenen
+                  punt2L = stepper1.currentPosition();
+                  break;
+                }
+                else if(distanceRechts <= 3){
+                  // de positie van de motor om de hoek te berekenen
+                  punt2R = stepper1.currentPosition();
+                  break;
+                }
+              }
             break;
             
             case 4: // links kleiner dan 3
@@ -366,8 +394,9 @@ void obstakelOntwijking(){
 
             case 9: // links en rechts kleiner dan 3
 
+            break;
 
-            default; // glitch
+            default: // glitch
             break;
 
 
