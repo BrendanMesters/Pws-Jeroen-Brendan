@@ -1,3 +1,5 @@
+!!vergeet niet [stackoverflow](https://stackoverflow.com/users/7473796/brendan-mesters) te quoten voor de hulp die we hebben gekregen.!!
+
 # Pws-Jeroen-Brendan
 De `C++` en `Python` code van ons PWS
 
