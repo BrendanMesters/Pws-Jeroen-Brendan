@@ -166,6 +166,18 @@ void rotate(int graden){
   }
 
 
+
+  
+void alsIsRunning(){
+  while(stepper1.isRunning() || stepper2.isRunning()){
+       stepper1.run(); // deze kan goed worden aangeroepen om code te besparen
+       stepper2.run();
+  }
+}
+
+
+
+
 void obstakelOntwijking(){
  
   // als de afstand kleiner is dan 2 cm dan moet het stoppen dat moet ik nog testen
@@ -206,10 +218,7 @@ void obstakelOntwijking(){
                 stepper2.move( bandRadius *  -stappenPerRotatie);
                 Serial.print("voor is");
                 Serial.println(distanceVoor);
-                while(stepper1.isRunning() || stepper2.isRunning()){
-                  stepper1.run();
-                  stepper2.run();
-                }
+                alsIsRunning();
               }             
             }
            }
@@ -225,10 +234,7 @@ void obstakelOntwijking(){
                 stepper2.move( bandRadius *  -stappenPerRotatie);
                 Serial.print("voor is");
                 Serial.println(distanceVoor);
-                while(stepper1.isRunning() || stepper2.isRunning()){
-                  stepper1.run();
-                  stepper2.run();
-                }
+                alsIsRunning();
               }
             }
           }
@@ -259,23 +265,14 @@ void obstakelOntwijking(){
                 // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
                 stepper1.move((teDraaienHoek + 90) * gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
                 stepper2.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor rechts
-                while(stepper1.isRunning() || stepper2.isRunning()){
-                  stepper1.run();
-                   stepper2.run();
-                 }
+                alsIsRunning();
                  stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; 3cm van de muur af rijden
                  stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
                  //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
-                 while(stepper1.isRunning() || stepper2.isRunning()){
-                  stepper1.run();
-                  stepper2.run();
-                 }
+                 alsIsRunning();
                 stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
                 stepper2.move(90 * gradenNaarStappen); //motor rechts
-                while(stepper1.isRunning() || stepper2.isRunning()){ // kunnen we hier geen void van maken om code te besparen???
-                   stepper1.run();
-                   stepper2.run(); 
-                }
+                alsIsRunning();
               }
             }
             
@@ -305,17 +302,11 @@ void obstakelOntwijking(){
                 // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
                 stepper1.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
                 stepper2.move((teDraaienHoek + 90) * gradenNaarStappen); //motor rechts
-                while(stepper1.isRunning() || stepper2.isRunning()){
-                   stepper1.run();
-                  stepper2.run();
-                }
+                alsIsRunning();
                 stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; 3cm van de muur af rijden
                 stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
                 //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
-                while(stepper1.isRunning() || stepper2.isRunning()){
-                  stepper1.run();
-                  stepper2.run();
-                }
+                alsIsRunning();
                 stepper1.move(90 * gradenNaarStappen); //motor links; paralel krijgen
                 stepper2.move(90 * -gradenNaarStappen); //motor rechts
                 while(stepper1.isRunning() || stepper2.isRunning()){ // kunnen we hier geen void van maken om code te besparen???
@@ -330,19 +321,13 @@ void obstakelOntwijking(){
     case 5: // voor & links dus naar rechts draaien
           stepper1.move(90 * gradenNaarStappen); // beweging motor links
           stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
-            while(stepper1.isRunning() || stepper2.isRunning()){
-              stepper1.run();
-              stepper2.run();
-            }
+            alsIsRunning();
           break;
         
      case 6: // voor & rechts
           stepper1.move(90 * -gradenNaarStappen); // beweging motor links
           stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
-            while(stepper1.isRunning() || stepper2.isRunning()){
-              stepper1.run();
-              stepper2.run();
-            }
+            alsIsRunning();
           break;
         
      case 7: // links & rechts
@@ -385,7 +370,26 @@ void obstakelOntwijking(){
             break;
             
             case 4: // links kleiner dan 3
-
+                int afgelegdeAfstand;
+                int teDraaienHoek;
+                afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
+                teDraaienHoek = 1 / (tan((afgelegdeAfstand/2)/ 180 * Pi)); // bereken de te draaien hoek
+                // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
+                stepper1.move((teDraaienHoek + 90) * gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
+                stepper2.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor rechts
+                alsIsRunning();
+                 if((distanceLinks + distanceRechts) > 6.2){
+                  stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
+                  stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+                  //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
+                  while(stepper1.isRunning() || stepper2.isRunning()){
+                    stepper1.run();
+                    stepper2.run();
+                  }
+                 }
+                stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
+                stepper2.move(90 * gradenNaarStappen); //motor rechts
+                alsIsRunning();;
             break;
             
             case 5: // rechts kleiner dan 3
@@ -409,20 +413,14 @@ void obstakelOntwijking(){
              if (rand() % 2 == 0){
               stepper1.move( bandRadius *  -stappenPerRotatie);
               stepper2.move( bandRadius *  -stappenPerRotatie);
-              while(stepper1.isRunning() || stepper2.isRunning()){
-                stepper1.run();
-                stepper2.run();
-              }
+              alsIsRunning();
              }
 
                          // ga naar voren
             else {
               stepper1.move( bandRadius *  stappenPerRotatie);
               stepper2.move( bandRadius *  stappenPerRotatie);
-              while(stepper1.isRunning() || stepper2.isRunning()){
-                stepper1.run();
-                stepper2.run();
-              }
+              alsIsRunning();
             }
         }
           break;
@@ -432,10 +430,7 @@ void obstakelOntwijking(){
         while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor <= 5)){ 
               stepper1.move( bandRadius *  -stappenPerRotatie);
               stepper2.move( bandRadius *  -stappenPerRotatie);
-              while(stepper1.isRunning() || stepper2.isRunning()){
-                stepper1.run();
-                stepper2.run();
-              }
+              alsIsRunning();
 
         }
           break;
