@@ -41,6 +41,10 @@ class Kaart:
 
     def _distance(self, x1, y1, x2, y2):
         return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
+        
+    def _line_intersect_rect(self, x, y, angle, range): #returns all the values a line crosses.
+    	a = math.cos(angle)
+    	
 
 
     def how_high(self):
@@ -57,7 +61,7 @@ class Kaart:
 
     def how_far_line(self, x, y, angle):
     	retVal = None
-        a = math.cos(angle)
+        a = math.tan(angle)
         ietsVakjes = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 1]
         print(ietsVakjes)
         for vakje in ietsVakjes:
