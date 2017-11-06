@@ -33,3 +33,6 @@
 
 # Apple junk
 .DS_Store
+
+# Weird BBEddit stuff
+.pyc
