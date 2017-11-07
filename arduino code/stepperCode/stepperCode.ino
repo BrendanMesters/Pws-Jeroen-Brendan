@@ -339,7 +339,7 @@ void obstakelOntwijking(){
          punt2L = 0;
          punt2R = 0;
   
-         if((distanceLinks >=(3/cos(30/ 180 * Pi))) && (distanceRechts >=(3/cos(30/ 180 * Pi)))) {switchKeyCase7 += 3;}
+         if((distanceLinks > (3/cos(30/ 180 * Pi))) && (distanceRechts > (3/cos(30/ 180 * Pi)))) {switchKeyCase7 += 3;}
          if(distanceLinks <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 4;}
          if(distanceRechts <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 5;}
           switch(switchKeyCase7){
@@ -370,26 +370,27 @@ void obstakelOntwijking(){
             break;
             
             case 4: // links kleiner dan 3
-                int afgelegdeAfstand;
-                int teDraaienHoek;
-                afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
-                teDraaienHoek = 1 / (tan((afgelegdeAfstand/2)/ 180 * Pi)); // bereken de te draaien hoek
-                // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
-                stepper1.move((teDraaienHoek + 90) * gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
-                stepper2.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor rechts
-                alsIsRunning();
-                 if((distanceLinks + distanceRechts) > 6.2){
-                  stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
-                  stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
-                  //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
-                  while(stepper1.isRunning() || stepper2.isRunning()){
-                    stepper1.run();
-                    stepper2.run();
-                  }
-                 }
-                stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
-                stepper2.move(90 * gradenNaarStappen); //motor rechts
-                alsIsRunning();;
+                if((distanceLinks + distanceRechts) > 7){
+                 int afgelegdeAfstand;
+                 int teDraaienHoek;
+                 afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
+                 teDraaienHoek = 1 / (tan((afgelegdeAfstand/2)/ 180 * Pi)); // bereken de te draaien hoek
+                 // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
+                 stepper1.move((teDraaienHoek + 90) * gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
+                 stepper2.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor rechts
+                 alsIsRunning();
+                 float tussenDeMuren; // een var om uit te rekenen hoeveel hij moet rijden om in het midden te rijden moet toegepast in wat er onder staat
+                 stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
+                 stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+                 //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
+                 alsIsRunning();
+                 
+                 stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
+                 stepper2.move(90 * gradenNaarStappen); //motor rechts
+                 alsIsRunning();
+                }
+                else
+                // ga achteruit rijden weg van de trechter
             break;
             
             case 5: // rechts kleiner dan 3
