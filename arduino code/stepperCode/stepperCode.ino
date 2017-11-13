@@ -1,6 +1,6 @@
 //als je iets terug wilt zien van je programma gebruik je Serial.println('Hier is je bericht');
 //Berekeningen worden in CM gemaakt
-// mijn mac kan nu ook veranderingen aan brengen?? werkt het???
+// mijn mac kan nu ook veranderingen aan brengen??
 //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
 
 #include <AccelStepper.h>
@@ -213,7 +213,7 @@ void obstakelOntwijking(){
               stepper1.run(); 
               stepper2.run();
               sensor();
-              if (distanceVoor <= 2){
+              if (distanceVoor <= 2){//dit werkt blijkbaar ook nog niet zoals ik dacht moet nog naar gekeken worden.?????? test
                 stepper1.move( bandRadius *  -stappenPerRotatie);
                 stepper2.move( bandRadius *  -stappenPerRotatie);
                 Serial.print("voor is");
@@ -361,7 +361,7 @@ void obstakelOntwijking(){
                   punt2L = stepper1.currentPosition();
                   break;
                 }
-                else if(distanceRechts <= 3){
+                else if(distanceRechts <= 3){ // is de else hier nodig???
                   // de positie van de motor om de hoek te berekenen
                   punt2R = stepper1.currentPosition();
                   break;
@@ -380,25 +380,77 @@ void obstakelOntwijking(){
                  stepper2.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor rechts
                  alsIsRunning();
                  float tussenDeMuren; // een var om uit te rekenen hoeveel hij moet rijden om in het midden te rijden moet toegepast in wat er onder staat
-                 stepper1.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
-                 stepper2.move( round(3 / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
-                 //hierna moet hij nog wat doen om niet steed 3/cos( 30 / 180 * Pi) cm dicht bij de muur te zijn
+                 tussenDeMuren = distanceLinks + distanceRechts;       
+                 stepper1.move( round( (tussenDeMuren / 2 - 3/cos( 30 / 180 * Pi)) / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
+                 stepper2.move( round( (tussenDeMuren / 2 - 3/cos( 30 / 180 * Pi)) / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
                  alsIsRunning();
-                 
                  stepper1.move(90 * -gradenNaarStappen); //motor links; paralel krijgen
                  stepper2.move(90 * gradenNaarStappen); //motor rechts
                  alsIsRunning();
                 }
-                else
+                else{
+                  int afgelegdeAfstand;
+                  afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
+                  stepper1.move( round( (afgelegdeAfstand + 3 * bandRadius) / bandRadius * -stappenPerRotatie) ); // het draaien van de linker stappenmotor; achteruit als hij in een trechter zit
+                  stepper2.move( round( (afgelegdeAfstand + 3 * bandRadius) / bandRadius * -stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+                  alsIsRunning();
+                  if (rand() % 2 == 0){
+                    //draai naar links
+                    stepper1.move(90 * -gradenNaarStappen); //motor links; 
+                    stepper2.move(90 * gradenNaarStappen); //motor rechts
+                    alsIsRunning();
+                  }
+                  else{
+                   stepper1.move(90 * gradenNaarStappen); //motor links; 
+                   stepper2.move(90 * -gradenNaarStappen); //motor rechts
+                   alsIsRunning();
+                  }
                 // ga achteruit rijden weg van de trechter
+                }
             break;
             
             case 5: // rechts kleiner dan 3
-
+                if((distanceLinks + distanceRechts) > 7){
+                 int afgelegdeAfstand;
+                 int teDraaienHoek;
+                 afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
+                 teDraaienHoek = 1 / (tan((afgelegdeAfstand/2)/ 180 * Pi)); // bereken de te draaien hoek
+                 // nu parralel krijgen en er voor zorgen dat hij niet nog maar 3 cm van de muur af is en er geen obstakelOntwijking meer in werking kan gaan
+                 stepper1.move((teDraaienHoek + 90) * -gradenNaarStappen); //motor links; deel van het parralel krijgen en meer dan 3cm van de muur af
+                 stepper2.move((teDraaienHoek + 90) * gradenNaarStappen); //motor rechts
+                 alsIsRunning();
+                 float tussenDeMuren; // een var om uit te rekenen hoeveel hij moet rijden om in het midden te rijden moet toegepast in wat er onder staat
+                 tussenDeMuren = distanceLinks + distanceRechts;       
+                 stepper1.move( round( (tussenDeMuren / 2 - 3/cos( 30 / 180 * Pi)) / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor; naar het midden van de twee muren test
+                 stepper2.move( round( (tussenDeMuren / 2 - 3/cos( 30 / 180 * Pi)) / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+                 alsIsRunning();
+                 stepper1.move(90 * gradenNaarStappen); //motor links; paralel krijgen
+                 stepper2.move(90 * -gradenNaarStappen); //motor rechts
+                 alsIsRunning();
+                }
+                else{
+                  int afgelegdeAfstand;
+                  afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
+                  stepper1.move( round( (afgelegdeAfstand + 3 * bandRadius) / bandRadius * -stappenPerRotatie) ); // het draaien van de linker stappenmotor; achteruit als hij in een trechter zit
+                  stepper2.move( round( (afgelegdeAfstand + 3 * bandRadius) / bandRadius * -stappenPerRotatie) ); // het draaien van de rechter stappenmotor
+                  alsIsRunning();
+                  if (rand() % 2 == 0){
+                    //draai naar links
+                    stepper1.move(90 * -gradenNaarStappen); //motor links; 
+                    stepper2.move(90 * gradenNaarStappen); //motor rechts
+                    alsIsRunning();
+                  }
+                  else{
+                   stepper1.move(90 * gradenNaarStappen); //motor links; 
+                   stepper2.move(90 * -gradenNaarStappen); //motor rechts
+                   alsIsRunning();
+                  }
+                // ga achteruit rijden weg van de trechter
+                }
             break;
 
             case 9: // links en rechts kleiner dan 3
-
+            
             break;
 
             default: // glitch
