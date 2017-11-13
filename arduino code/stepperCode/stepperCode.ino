@@ -1,6 +1,6 @@
 //als je iets terug wilt zien van je programma gebruik je Serial.println('Hier is je bericht');
 //Berekeningen worden in CM gemaakt
-// mijn mac kan nu ook veranderingen aan brengen??
+// mijn mac kan nu ook veranderingen aan brengen?? werkt het???
 //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
 
 #include <AccelStepper.h>
