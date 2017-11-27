@@ -45,13 +45,21 @@ class Kaart:
     def _distance(self, x1, y1, x2, y2):
         return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
         
-    def _line_intersect_rect(self, x, y, angle, range): #returns all the values a line crosses.
-    	a = math.cos(angle)
-    	
+        
+        #returns all the locations our line crosses.
+#     def _line_intersect_rect(self, x=0, y=0, angle=0):
+#     	#als je y = ax hebt is dit die a
+#     	a = 1/math.tan(angle) 
+#     	#voor elk punt kijken of distance middenpunt_lijn< .5 dan gaat hij door hem heen, 
+#     	#anders als distance > .5 sqrt(2) gaat hij niet doorheen en daartussen gewoon checken of de lijn
+#     	#door zijn onderste of bovenste lijn heen gaat
+#     	retVal = []
+#     	retVal.append((x, y))
 
 
     def how_high(self):
-        return len(self.matrixRC[0])
+        return len(self.matri
+        RC[0])
 
     def how_wide(self):
         return len(self.matrixRC)
@@ -64,35 +72,36 @@ class Kaart:
 
     def how_far_line(self, x, y, angle):
     	retVal = None
-        a = math.tan(angle)
+        a = math.sin(angle)
         ietsVakjes = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 1]
         print(ietsVakjes)
         for vakje in ietsVakjes:
             if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1): # seeing if my imaginairy line crosses the square
             	print(vakje)
-            	if retVal != None: retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
-            	else: retVal = self._distance(x, y, vakje[0], vakje[1])
+            	if retVal != None: 
+            		retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
+            	else: 
+            		retVal = self._distance(x, y, vakje[0], vakje[1])
         return retVal
 
         
         
-        
-    def how_far_free(self, x, y, angle, breedte):
-        retVal = None
-        for i in range(breedte+1):
-        	newX = math.sin(angle) * (i   -.5 * breedte) + x
-        	newY = math.cos(angle) * (i   -.5 * breedte) + y
-    		foo = self.how_far_line(newX, newY, angle)
-    		if retVal == None or foo < retVal:
-    			retVal = foo
-    	return retVal
+	def how_far_free(self, x=0, y=0, angle=0, breedte=2):
+		retVal = None
+		for i in range(breedte+1):
+			newX = math.sin(angle) * (i -.5 * breedte) + x
+			newY = math.cos(angle) * (i -.5 * breedte) + y
+			foo = self.how_far_line(newX, newY, angle)
+			if retVal == None or foo < retVal:
+				retVal = foo
+		return retVal
 
 
-    def nearest_unknown(self, x, y):
-    	retVal = None
-        unknownLocations = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 2]
-        for loc in unknownLocations:
-        	foo = self._distance(foo[0], foo[1], x, y)
+	def nearest_unknown(self, x, y):
+		retVal = None
+		unknownLocations = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 2]
+		for loc in unknownLocations:
+			foo = self._distance(loc[0], loc[1], x, y)
 			if retVal == None or foo < retVal:
 				retVal = foo
 		return retVal
