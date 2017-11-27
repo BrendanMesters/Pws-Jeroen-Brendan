@@ -1,5 +1,8 @@
+# have not yet tested the changes to how_far_free and nearest_unknown
+
 import math
 Pi = math.pi
+
 
 class Kaart:
     """ een matrix die de kaart van de auto aan gaat geven 0 is niets, 1 is iets
@@ -65,7 +68,7 @@ class Kaart:
         ietsVakjes = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 1]
         print(ietsVakjes)
         for vakje in ietsVakjes:
-            if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1):
+            if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1): # seeing if my imaginairy line crosses the square
             	print(vakje)
             	if retVal != None: retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
             	else: retVal = self._distance(x, y, vakje[0], vakje[1])
@@ -74,13 +77,26 @@ class Kaart:
         
         
         
-    def how_far_free(self, x, y, angle):
-        pass
+    def how_far_free(self, x, y, angle, breedte):
+        retVal = None
+        for i in range(breedte+1):
+        	newX = math.sin(angle) * (i   -.5 * breedte) + x
+        	newY = math.cos(angle) * (i   -.5 * breedte) + y
+    		foo = self.how_far_line(newX, newY, angle)
+    		if retVal == None or foo < retVal:
+    			retVal = foo
+    	return retVal
+
 
     def nearest_unknown(self, x, y):
-        unknownLocations = [(X, Y) for X in range(3) for Y in range(3) if self.matrixRC[X][Y] == 2]
-        
-
+    	retVal = None
+        unknownLocations = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 2]
+        for loc in unknownLocations:
+        	foo = self._distance(foo[0], foo[1], x, y)
+			if retVal == None or foo < retVal:
+				retVal = foo
+		return retVal
+		
 
     def combine(self, other, locationDefinement):
         pass
