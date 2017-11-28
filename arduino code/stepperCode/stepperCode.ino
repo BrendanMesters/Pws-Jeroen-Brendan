@@ -475,8 +475,8 @@ void obstakelOntwijking(){
             // moet nog verzinnen hoe ver hij naar achter moet rijden.
                 int afgelegdeAfstand;
                 afgelegdeAfstand = (punt2R - punt1R) / stappenPerRotatie * bandRadius; // uitrekenen hoeveel afstand er is afgelegd sind switchKey = 3 tot distanceLinks <= (3/cos( 30 / 180 * Pi)  
-                stepper1.move( bandRadius *  -stappenPerRotatie); // beweging motor links
-                stepper2.move( bandRadius *  -stappenPerRotatie); // beweging motor rechts
+                stepper1.move( afgelegdeAfstand + bandRadius *  -stappenPerRotatie); // beweging motor links
+                stepper2.move( afgelegdeAfstand + bandRadius *  -stappenPerRotatie); // beweging motor rechts
                 if (rand() % 2 == 0){
                     //draai naar links
                     stepper1.move(90 * -gradenNaarStappen); //motor links; 
