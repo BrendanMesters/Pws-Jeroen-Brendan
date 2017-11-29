@@ -10,11 +10,14 @@ class Kaart:
     !!!(2, 5) is de tweede rij en de vijfde colom!!!
     !!! colom telt van boven naar beneden, rij telt van links naar rechts!!!
     each pixel is one square cm
+    van kaart = Kaart(10, 10) is de linker bovenhoek 0,0 de rechter onderhoek 10,10 
+    maar de locatie van elk vakje word dus halven, 
+    het midden van het linker boven vakje is dan dus (0.5, 0.5)
     """
     
     def __init__(self, rows = 10, colls = 10):
-    	self.rows = rows
-    	self.colls = colls
+        self.rows = rows
+        self.colls = colls
         self.matrixRC = []
         for _ in range(rows):
             self.matrixRC.append([2 for _ in range(colls)])
@@ -26,24 +29,26 @@ class Kaart:
             retVal = retVal.replace(str(index), new)
         return retVal
     
-# 	def __getitem__(self, key):
-# 		r, c = key
-# 		return self.matrixRC[r][c]
-# 
-# 	def __setitem__(self, key, value):
-# 		r, c = key
-# 		self.matrixRC[r][c] = value
-# 	
-#  	def __iter__(self):
-#  		self.matrixRC.__iter__()
-# 	
-# 	def __next__(self):
-# 		for i in self.matrixRC:
-# 			for j in i:
-# 				return j
+    def __getitem__(self, key):
+        r, c = key
+        return self.matrixRC[r][c]
+
+    def __setitem__(self, key, value):
+        r, c = key
+        self.matrixRC[r][c] = value
+
+    def __iter__(self):
+        for i in self.matrixRC:
+            for j in i:
+                yield j
+
+    def __next__(self):
+        for i in self.matrixRC:
+            for j in i:
+                return j
 
 
-	
+
     def _add(self, location = 0): #    0 = top; 1 = right; 2 = bot; 3 = left.
         if location == 0: #top
             for i in range(len(self.matrixRC)):
@@ -62,7 +67,14 @@ class Kaart:
     def _distance(self, x1, y1, x2, y2):
         return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
         
-        
+
+    def _sonarInfoToList(self, string):
+        retVal = string.split(',')
+        for num, val in enumerate(retVal):
+            retVal[num] = int(val)
+        return retVal 
+
+
         #returns all the locations our line crosses.
 #     def _line_intersect_rect(self, x=0, y=0, angle=0):
 #     	#als je y = ax hebt is dit die a
@@ -81,52 +93,118 @@ class Kaart:
         return len(self.matrixRC)
         
     def debugPrint(self):
-		return '\n'.join(str(row) for row in self.matrixRC)
-		
-    
+        return '\n'.join(str(row) for row in self.matrixRC)
+
+
 
 
     def beam(self, x, y, angle, distance):
-        pass
-
+        #list of all squares our line passes.
+        retVal = [] 
+        
+        #we want the start location to not be located on the edge of two rectangles,
+        #this is a way to make sure that this won't happen
     
+        
+        
+        # makes angle a value in between 0 and 2*Pi
+        while angle < 0:
+            angle += 2*pi
+        while angle > 2*Pi:
+            angle -= 2*Pi 
+        
+        
+        xRange = math.ceil(sin(angle))*distance
+        yValues = [x/math.tan(angle) for x in range(xRange)]
+        if !xRange.is_integer():
+            yValues.append(xRange.math.tan(angle))
+          
+        #ik kijk hier naar de met beginpunt (x, y), richting angle en lengte distance
+        #ik zal bij deze functie kijken wanneer de x een geheel getal is, als ik
+        #de y values op die locatie opsla (in de var yLocactions) dan weet ik dat
+        # de stukken daartussen geraakt worden.
+        
+        #naar rechtsboven
+        if angle > 0 and angle < .5*Pi: 
+            #we want the start location to not be located on the edge of two rectangles,
+            #this is a way to make sure that this won't happen (we'll be doing this 
+            #on every angle instance)
+            if x.is_integer():
+                newX = x+.5
+            if y.is_integer():
+                newY 1= x+.5
+            retVal.append(math.floor(x), math.floor(y))
+            
+            for num in range(1, len(yValues)):
+                retVal.extend((num,Y+math.ceil(yValues[num-1])) for Y in range( math.ceil(yValues[num]-yValues[num-1] + 1)))
+            return retVal
+            
+            
+            
+        #naar rechtsonder
+        elif angle > .5*Pi and angle < Pi: 
+            if x.is_integer():
+                x += .5
+            if y.is_integer():
+                y += .5
+            
+          
+        #naar linksonder
+        elif angle > Pi and angle < 1.5*Pi: 
+            if x.is_integer():
+                x -= .5
+            if y.is_integer():
+                y += .5
+        
+        #naar linksbove
+        elif angle > 1.5*Pi and angle < 2*Pi: n
+            if x.is_integer():
+                x -= .5
+            if y.is_integer():
+                y -= .5
+                
+        #other cases
+        else:
+            
+
+
+
 
     def how_far_line(self, x, y, angle):
-    	retVal = None
+        retVal = None
         a = math.sin(angle)
         ietsVakjes = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 1]
         print(ietsVakjes)
         for vakje in ietsVakjes:
             if(vakje[0]*a < vakje[1] and vakje[0]*a > vakje[1]-1) or ((vakje[0]+1)*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a < vakje[1] and (vakje[0]+1)*a > vakje[1]-1) or (vakje[0]*a > vakje[1] and (vakje[0]+1)*a < vakje[1]-1): # seeing if my imaginairy line crosses the square
-            	print(vakje)
-            	if retVal != None: 
-            		retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
-            	else: 
-            		retVal = self._distance(x, y, vakje[0], vakje[1])
+                print(vakje)
+                if retVal != None: 
+                    retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
+                else: 
+                    retVal = self._distance(x, y, vakje[0], vakje[1])
         return retVal
 
-        
-        
-	def how_far_free(self, x=0, y=0, angle=0, breedte=2):
-		retVal = None
-		for i in range(breedte+1):
-			newX = math.sin(angle) * (i -.5 * breedte) + x
-			newY = math.cos(angle) * (i -.5 * breedte) + y
-			foo = self.how_far_line(newX, newY, angle)
-			if retVal == None or foo < retVal:
-				retVal = foo
-		return retVal
+
+    def how_far_free(self, x=0, y=0, angle=0, breedte=2):
+        retVal = None
+        for i in range(breedte+1):
+            newX = math.sin(angle) * (i -.5 * breedte) + x
+            newY = math.cos(angle) * (i -.5 * breedte) + y
+            foo = self.how_far_line(newX, newY, angle)
+            if retVal == None or foo < retVal:
+                retVal = foo
+        return retVal
 
 
-	def nearest_unknown(self, x, y):
-		retVal = None
-		unknownLocations = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 2]
-		for loc in unknownLocations:
-			foo = self._distance(loc[0], loc[1], x, y)
-			if retVal == None or foo < retVal:
-				retVal = foo
-		return retVal
-		
+    def nearest_unknown(self, x, y):
+        retVal = None
+        unknownLocations = [(X, Y) for X in range(self.rows) for Y in range(self.colls) if self.matrixRC[X][Y] == 2]
+        for loc in unknownLocations:
+            foo = self._distance(loc[0], loc[1], x, y)
+            if retVal == None or foo < retVal:
+                retVal = foo
+        return retVal
+
 
     def combine(self, other, locationDefinement):
         pass
