@@ -33,6 +33,16 @@
   const int trigPinRechts = 2;
   const int echoPinRechts = 3;
 
+// de ir sensor zijn setup
+//collects data from an analog sensor
+// y= 11181x^-1,143 de functie moet nog worden aangepast
+int sensorpin = 0;                 // analog pin used to connect the sharp sensor
+float val = 0;                 // variable to store the values from sensor(initially zero)
+float afstand = 0;
+
+
+
+
 // const int's van de auto
   const float bandRadius = 6.5*Pi; // omtrek van de band ;
   const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
@@ -69,6 +79,7 @@ void setup() {
 
 
 void loop() {
+  irSensor();
   drive(input); // de afstandsensoren moeten nog in drive en rotate
   rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
@@ -112,6 +123,20 @@ void sensor(){
   distanceRechts = durationRechts*0.034/2; 
   
   
+}
+
+
+void irSensor()
+{
+  if (val = 0){
+  val = analogRead(sensorpin);       // reads the value of the sharp sensor
+  Serial.println(val);            // prints the value of the sensor to the serial monitor 
+  if(val != 0){ 
+    afstand = (11181*pow(val,-1.143));
+    Serial.print("dit is de afstand");
+    Serial.println(val);
+  }          
+  }
 }
 
 void drive (int cm){
