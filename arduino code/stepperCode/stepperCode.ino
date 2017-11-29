@@ -276,8 +276,8 @@ void obstakelOntwijking(){
         // currentPosition() geeft de huidige positie van de stappenmotor in stappen
           while ((distanceLinks <= (5/cos(30/ 180 * Pi))) && (distanceVoor > 5)){ 
             
-            stepper1.move( bandRadius *  stappenPerRotatie);
-            stepper2.move( bandRadius *  stappenPerRotatie);
+            stepper1.move( 1 *  stappenPerRotatie);
+            stepper2.move( 1 *  stappenPerRotatie);
             Serial.println("Ik ben hier!");
             while ((stepper1.isRunning()) || (stepper2.isRunning())){
               sensor();
@@ -314,7 +314,7 @@ void obstakelOntwijking(){
                 sensor();
             }
           }
-    }
+        }
         
     break ;
         
@@ -359,16 +359,19 @@ void obstakelOntwijking(){
           stepper1.move(90 * gradenNaarStappen); // beweging motor links
           stepper2.move(90 * -gradenNaarStappen); // beweging motor rechts
             alsIsRunning();
+            sensor();
           break;
         
      case 6: // voor & rechts
           stepper1.move(90 * -gradenNaarStappen); // beweging motor links
           stepper2.move(90 * gradenNaarStappen); // beweging motor rechts
             alsIsRunning();
+            sensor();
           break;
         
      case 7: // links & rechts
          // zolang de afstand van rechts en links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit of achteruit rijden 
+         //deze moet ik nog nakijken op sensor(); en formules
          int switchKeyCase7;
          int punt2L;
          int punt2R;
@@ -381,8 +384,8 @@ void obstakelOntwijking(){
          if(distanceRechts <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 5;}
           switch(switchKeyCase7){
             case 3: // nog groter dan 3 maar kleiner dan 5
-              stepper1.move( 1 *  -stappenPerRotatie); // beweging motor links
-              stepper2.move( 1 *  -stappenPerRotatie); // beweging motor rechts
+              stepper1.move( 1 *  stappenPerRotatie); // beweging motor links
+              stepper2.move( 1 *  stappenPerRotatie); // beweging motor rechts
               while(stepper1.isRunning() || stepper2.isRunning()){
                 stepper1.run(); 
                 stepper2.run();
@@ -533,9 +536,10 @@ void obstakelOntwijking(){
         case 9: // voor & links & rechts
         // ga naar achter zolang de afstand van alle 3 kleiner is dan 5 cm
         while ((distanceRechts <=5) && (distanceLinks <= 5) && (distanceVoor <= 5)){ 
-              stepper1.move( bandRadius *  -stappenPerRotatie);
-              stepper2.move( bandRadius *  -stappenPerRotatie);
+              stepper1.move( 1 *  -stappenPerRotatie);
+              stepper2.move( 1 *  -stappenPerRotatie);
               alsIsRunning();
+              sensor();
 
         }
           break;
