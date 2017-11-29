@@ -37,7 +37,7 @@
   const float bandRadius = 6.5*Pi; // omtrek van de band ;
   const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
   const int volledigeRotatieafstandWiel = 2*Pi*afstandWielDraaipunt; //De afstand die beide wielen afleggwen voor een voledig rondje om de AUTO zijn as;
-  const int stappenPerRotatie = 4096; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het 4096 is);
+  const int stappenPerRotatie = 4047; // aantal stappen in halfstep dat nodig is om een volledig rondje te maken (nog aanpassen als het niet 4096 is);
   const int gradenNaarStappen = stappenPerRotatie/360; //het omrekenen van graden naar stappen, dus 180graden*gradenNaarStappen=2048 als stappenPerRotatie 4096 is;
   const int stappenNaarGraden = 360/stappenPerRotatie; // het omrekenen van stappen naar graden, gebruiken voor doorgeven aan pi hoeveel stappen er zijn gezet
   
@@ -214,11 +214,14 @@ void obstakelOntwijking(){
               stepper2.run();
               sensor();
               if (distanceVoor <= 2){//dit werkt blijkbaar ook nog niet zoals ik dacht moet nog naar gekeken worden.?????? test
-                stepper1.move( bandRadius *  -stappenPerRotatie);
-                stepper2.move( bandRadius *  -stappenPerRotatie);
                 Serial.print("voor is");
                 Serial.println(distanceVoor);
+                stepper1.move( 1 *  -stappenPerRotatie);
+                stepper2.move( 1 *  -stappenPerRotatie);
                 alsIsRunning();
+                sensor();
+                Serial.print("voor is bij case 2 na sensor");
+                Serial.println(distanceVoor);
               }             
             }
            }
@@ -230,32 +233,19 @@ void obstakelOntwijking(){
               stepper2.run();
               sensor();
               if (distanceVoor <= 2){
-                stepper1.move( bandRadius *  -stappenPerRotatie);
-                stepper2.move( bandRadius *  -stappenPerRotatie);
                 Serial.print("voor is");
                 Serial.println(distanceVoor);
+                stepper1.move( 1 *  -stappenPerRotatie);
+                stepper2.move( 1 *  -stappenPerRotatie);
                 alsIsRunning();
+                sensor();
+                Serial.print("voor is bij case 2 na sensor");
+                Serial.println(distanceVoor);
               }
             }
           }
           break;
-        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    
     case 3: // links ??????? test
         // zolang de afstand van links kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden
         // currentPosition() geeft de huidige positie van de stappenmotor in stappen
@@ -306,8 +296,8 @@ void obstakelOntwijking(){
     case 4: // rechts
         // zolang de afstand van rechts kleiner is dan 5 en hij voor ook niet gaat botsen moet hij vooruit rijden 
           while((distanceRechts <= (5/cos(30/ 180 * Pi))) && (distanceVoor > 5)){ 
-            stepper1.move( bandRadius *  stappenPerRotatie);
-            stepper2.move( bandRadius *  stappenPerRotatie);
+            stepper1.move( 1 *  stappenPerRotatie);
+            stepper2.move( 1 *  stappenPerRotatie);
             while ((stepper1.isRunning()) || (stepper2.isRunning())){
               sensor();
               Serial.print("case 4 voor is ");
@@ -366,8 +356,8 @@ void obstakelOntwijking(){
          if(distanceRechts <=(3/cos(30/ 180 * Pi))) {switchKeyCase7 += 5;}
           switch(switchKeyCase7){
             case 3: // nog groter dan 3 maar kleiner dan 5
-              stepper1.move( bandRadius *  -stappenPerRotatie); // beweging motor links
-              stepper2.move( bandRadius *  -stappenPerRotatie); // beweging motor rechts
+              stepper1.move( 1 *  -stappenPerRotatie); // beweging motor links
+              stepper2.move( 1 *  -stappenPerRotatie); // beweging motor rechts
               while(stepper1.isRunning() || stepper2.isRunning()){
                 stepper1.run(); 
                 stepper2.run();
