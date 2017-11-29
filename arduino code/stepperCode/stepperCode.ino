@@ -5,7 +5,7 @@
 
 #include <AccelStepper.h>
 
-
+// dit is de functie voor de ir sensor
 
 #define WITH_ERRORS
 
