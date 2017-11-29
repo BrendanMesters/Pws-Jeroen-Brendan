@@ -25,8 +25,25 @@ class Kaart:
         for index, new in enumerate((' ', '#', '?')):
             retVal = retVal.replace(str(index), new)
         return retVal
+    
+# 	def __getitem__(self, key):
+# 		r, c = key
+# 		return self.matrixRC[r][c]
+# 
+# 	def __setitem__(self, key, value):
+# 		r, c = key
+# 		self.matrixRC[r][c] = value
+# 	
+#  	def __iter__(self):
+#  		self.matrixRC.__iter__()
+# 	
+# 	def __next__(self):
+# 		for i in self.matrixRC:
+# 			for j in i:
+# 				return j
 
-            
+
+	
     def _add(self, location = 0): #    0 = top; 1 = right; 2 = bot; 3 = left.
         if location == 0: #top
             for i in range(len(self.matrixRC)):
@@ -58,11 +75,15 @@ class Kaart:
 
 
     def how_high(self):
-        return len(self.matri
-        RC[0])
+        return len(self.matrixRC[0])
 
     def how_wide(self):
         return len(self.matrixRC)
+        
+    def debugPrint(self):
+		return '\n'.join(str(row) for row in self.matrixRC)
+		
+    
 
 
     def beam(self, x, y, angle, distance):
