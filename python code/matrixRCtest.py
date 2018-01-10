@@ -2,5 +2,5 @@ import math
 import kaart
 
 map = kaart.Kaart()
-for i in map:
-    print(i)
+map[0,5] = 1
+print(map._distance(0,4,6,4))
