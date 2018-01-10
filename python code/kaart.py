@@ -183,14 +183,17 @@ class Kaart:
     # met distance lijn, middenpunt vakje kun je een "hit zien"
     #De distance nodig voor een hit zut tussen sqrt(2)/2 en .5, deze distance hangt af van de hoek
     # omdat hij het blokje raken moet.
+        angle = -angle #this is because the y axis is inverted, so people can just put in non-inverted angles.
         a = math.atan(angle) # for the function ax - y + c = 0
         b = -1 #because of the way we set up this equation
         c = y - a*x
         retVal = None
+        print('test', a, b, c )
         ietsVakjes = [(X, Y) for X in range(self.rowsLen) for Y in range(self.collsLen) if self.matrixRC[X][Y] == 1]
 #        print(ietsVakjes) #Test
         for vakje in ietsVakjes:
             d = math.fabs(a*vakje[0] + b*vakje[1] + c)/math.sqrt(a**2+b**2) #the distance between line and point
+            print('vakje is', vakje)
             print('d is', d) #test
             while angle >(.5 * Pi):
                 angle -= (.5 * Pi)

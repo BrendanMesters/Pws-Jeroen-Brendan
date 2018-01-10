@@ -7,4 +7,4 @@ for i in range(10):
 for i in range(10):
     for j in range(6):
         foo[j, i] = 0
-print(foo.how_far_line(0, 7, .5*math.pi))
+print(foo.how_far_line(0, 7, math.pi))
