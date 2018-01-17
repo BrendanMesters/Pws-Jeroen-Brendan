@@ -106,74 +106,27 @@ class Kaart:
 
 
 
-#     def beam(self, x, y, angle, distance):
-#         #list of all squares our line passes.
-#         retVal = [] 
-#         
-#         #we want the start location to not be located on the edge of two rectangles,
-#         #this is a way to make sure that this won't happen
-#     
-#         
-#         
-#         # makes angle a value in between 0 and 2*Pi
-#         while angle < 0:
-#             angle += 2*pi
-#         while angle > 2*Pi:
-#             angle -= 2*Pi 
-#         
-#         
-#         xRange = math.ceil(sin(angle))*distance
-#         yValues = [x/math.tan(angle) for x in range(xRange)]
-#         if not xRange.is_integer():
-#             yValues.append(xRange.math.tan(angle))
-#           
-#         #ik kijk hier naar de met beginpunt (x, y), richting angle en lengte distance
-#         #ik zal bij deze functie kijken wanneer de x een geheel getal is, als ik
-#         #de y values op die locatie opsla (in de var yLocactions) dan weet ik dat
-#         # de stukken daartussen geraakt worden.
-#         
-#         #naar rechtsboven
-#         if angle > 0 and angle < .5*Pi: 
-#             #we want the start location to not be located on the edge of two rectangles,
-#             #this is a way to make sure that this won't happen (we'll be doing this 
-#             #on every angle instance)
-#             if x.is_integer():
-#                 newX = x+.5
-#             if y.is_integer():
-#                 newY = x+.5
-#             retVal.append(math.floor(x), math.floor(y))
-#             
-#             for num in range(1, len(yValues)):
-#                 retVal.extend((num,Y+math.ceil(yValues[num-1])) for Y in range( math.ceil(yValues[num]-yValues[num-1] + 1)))
-#             return retVal
-#             
-#             
-#             
-#         #naar rechtsonder
-#         elif angle > .5*Pi and angle < Pi: 
-#             if x.is_integer():
-#                 x += .5
-#             if y.is_integer():
-#                 y += .5
-#             
-#           
-#         #naar linksonder
-#         elif angle > Pi and angle < 1.5*Pi: 
-#             if x.is_integer():
-#                 x -= .5
-#             if y.is_integer():
-#                 y += .5
-#         
-#         #naar linksbove
-#         elif angle > 1.5*Pi and angle < 2*Pi: n
-#             if x.is_integer():
-#                 x -= .5
-#             if y.is_integer():
-#                 y -= .5
-#                 
-#         #other cases
-#         else:
-#             pass
+    def beam(self, x, y, angle, distance):
+        angle = -angle #this is because the y axis is inverted, so people can just put in non-inverted angles.
+        a = math.atan(angle) # for the function ax - y + c = 0
+        b = -1 #because of the way we set up this equation
+        c = y - a*x
+        retVal = []
+#        print('test', a, b, c ) #Test
+        ietsVakjes = [(X, Y) for X in range(self.rowsLen) for Y in range(self.collsLen) if self.matrixRC[X][Y] == 1]
+#        print(ietsVakjes) #Test
+        for vakje in ietsVakjes:
+            d = math.fabs(a*vakje[0] + b*vakje[1] + c)/math.sqrt(a**2+b**2) #the distance between line and point
+#            print('vakje is', vakje) #Test
+#            print('d is', d) #Test
+            while angle >(.5 * Pi):
+                angle -= (.5 * Pi)
+            while angle < 0:
+                angle += (.5 * Pi)
+            #this is needed for our next calculation to work, I want angle between 0 and .5 Pi
+            if d <= math.sin(.25* Pi + angle)/math.sqrt(2):#the line hits the square.
+                retVal.append(vakje)
+        return retVal
             
 
 
@@ -203,18 +156,18 @@ class Kaart:
 #             print('angle is', angle) #test
             if d <= math.sin(.25* Pi + angle)/math.sqrt(2):#the line hits the square.
 #                 print('vakje is',vakje) #Test
-                if retVal != None: 
-                    retVal = min(retVal, self._distance(x, y, vakje[0], vakje[1]))
-                else: 
-                    retVal = self._distance(x, y, vakje[0], vakje[1])
+                foo = self._distance(x, y, vakje[0], vakje[1])
+                if retVal != None or foo < retVal: 
+                    retVal = foo
         return retVal
 
 
     def how_far_free(self, x=0, y=0, angle=0, breedte=2):
         retVal = None
         for i in range(breedte+1):
-            newX = math.sin(angle) * (i -.5 * breedte) + x
-            newY = math.cos(angle) * (i -.5 * breedte) + y
+            #I use negative angle cause the Y-axis is mirrored
+            newX = math.cos(-angle) * (i -.5 * breedte) + x
+            newY = math.sin(-angle) * (i -.5 * breedte) + y
             foo = self.how_far_line(newX, newY, angle)
             if retVal == None or foo < retVal:
                 retVal = foo
@@ -231,6 +184,33 @@ class Kaart:
         return retVal
 
 
-    def combine(self, other, locationDefinement):
+    def combine(self, other, lbX, lbY): #lb = linksboven WIP!
         pass
+        #(x,y)
+        
+        newLocations = []
+        for i, r in enumerate(other.matrixRC):
+            for j, c in enumerate(r):
+                if self[i,j] = 1:
+                elif other[i+lbX, j+lbY] = 1:
+                    self[i,j] = 1
+                elif self[i,j] = 2 and other[i+lbX, j+lbY] = 0:
+                    self[i,j] = 0
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
