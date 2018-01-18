@@ -191,10 +191,11 @@ class Kaart:
         newLocations = []
         for i, r in enumerate(other.matrixRC):
             for j, c in enumerate(r):
-                if self[i,j] = 1:
-                elif other[i+lbX, j+lbY] = 1:
+                if self[i,j] == 1: 
+                    pass
+                elif other[i+lbX, j+lbY] == 1:
                     self[i,j] = 1
-                elif self[i,j] = 2 and other[i+lbX, j+lbY] = 0:
+                elif self[i,j] == 2 and other[i+lbX, j+lbY] == 0:
                     self[i,j] = 0
         
 
