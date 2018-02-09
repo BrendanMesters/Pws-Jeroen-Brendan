@@ -16,11 +16,11 @@ class Kaart:
     het midden van het linker boven vakje is dan dus (0.5, 0.5)
     """
     
-    def __init__(self, rowsLen = 10, collsLen = 10, file='test123.txt'): #werkt
+    def __init__(self, rowsLen = 10, collsLen = 11, file='test123.txt'): #werkt
+        self.matrixRC = []
         if not file:
             self.rowsLen = rowsLen
             self.collsLen = collsLen
-            self.matrixRC = []
             for _ in range(rowsLen):
                 self.matrixRC.append([2 for _ in range(collsLen)])
         else:
@@ -29,12 +29,9 @@ class Kaart:
             lines = list(map(lambda l:l.strip('\n'), pre_lines))
             self.rowsLen = len(lines)
             self.collsLen = max(map(len, lines))
-            for i, line in enumerate(lines):
-                for j, char in enumerate(line):
-                    if i == 0:
-                        self.matrixRC.append(char)
-                    else:
-                        self.matrixRC[j].append(char)
+            for line in lines:
+                    self.matrixRC.append(list(line))
+            print(self.rowsLen, self.collsLen)
                 
 
 
@@ -45,7 +42,7 @@ class Kaart:
         for i in range(len(self.matrixRC)):
             retVal += '\n'
             for j in range(len(self.matrixRC[i])):
-                retVal += str(self[j,i])
+                retVal += str(self[i,j])
         for index, new in enumerate((' ', '#', '?')):
             retVal = retVal.replace(str(index), new)
         return retVal
