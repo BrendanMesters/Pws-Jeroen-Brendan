@@ -42,7 +42,11 @@ class Kaart:
         for i in range(len(self.matrixRC)):
             retVal += '\n'
             for j in range(len(self.matrixRC[i])):
+<<<<<<< HEAD
                 retVal += str(self[i,j])
+=======
+                retVal += str(self[i, j])
+>>>>>>> 1bcecd1a997aea21a7e5f2fa002727ef6ff1a413
         for index, new in enumerate((' ', '#', '?')):
             retVal = retVal.replace(str(index), new)
         return retVal
@@ -109,10 +113,12 @@ class Kaart:
 
 
     def how_high(self): #werkt
-        return len(self.matrixRC[0])
+        return len(self.matrixRC)
+        
 
     def how_wide(self): #werkt
-        return len(self.matrixRC)
+        return len(self.matrixRC[0])
+        
         
     def debugPrint(self): #werkt
         return '\n'.join(str(row) for row in self.matrixRC)
