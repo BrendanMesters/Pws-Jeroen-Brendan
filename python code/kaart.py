@@ -1,5 +1,5 @@
 # have not yet tested the changes to how_far_free and nearest_unknown
-#test
+
 
 
 import math
@@ -16,12 +16,27 @@ class Kaart:
     het midden van het linker boven vakje is dan dus (0.5, 0.5)
     """
     
-    def __init__(self, rowsLen = 10, collsLen = 10): #werkt
-        self.rowsLen = rowsLen
-        self.collsLen = collsLen
-        self.matrixRC = []
-        for _ in range(rowsLen):
-            self.matrixRC.append([2 for _ in range(collsLen)])
+    def __init__(self, rowsLen = 10, collsLen = 10, file='test123.txt'): #werkt
+        if not file:
+            self.rowsLen = rowsLen
+            self.collsLen = collsLen
+            self.matrixRC = []
+            for _ in range(rowsLen):
+                self.matrixRC.append([2 for _ in range(collsLen)])
+        else:
+            pre_map = open(file)
+            pre_lines = pre_map.readlines()
+            lines = list(map(lambda l:l.strip('\n'), pre_lines))
+            self.rowsLen = len(lines)
+            self.collsLen = max(map(len, lines))
+            for i, line in enumerate(lines):
+                for j, char in enumerate(line):
+                    if i == 0:
+                        self.matrixRC.append(char)
+                    else:
+                        self.matrixRC[j].append(char)
+                
+
 
 
     def __str__(self): #werkt
@@ -134,33 +149,40 @@ class Kaart:
 
 
 
-    def how_far_line(self, x, y, angle): #werkt, maar de lijn gaat ook naar achteren, moet je fixen!!
+    def how_far_line(self, x, y, angle): #werkt
     # met distance lijn, middenpunt vakje kun je een "hit zien"
     #De distance nodig voor een hit zut tussen sqrt(2)/2 en .5, deze distance hangt af van de hoek
     # omdat hij het blokje raken moet.
-        angle = -angle #this is because the y axis is inverted, so people can just put in non-inverted angles.
-        a = math.atan(angle) # for the function ax - y + c = 0
+    #angle begint boven aan, telt in radialen en draait met de klok mee.
+        # for the function ax - y + c = 0
+        a = math.tan(angle+.5*Pi) #this is because 0 rad is on the top for us.
         b = -1 #because of the way we set up this equation
         c = y - a*x
         retVal = None
-        print('test', a, b, c )
+        if ( math.floor(angle/Pi)%2 == 0 ):
+            right = True #test if the line is going to the right or to the left of the starting point.
+        else: 
+            right = False
+#        print('test', a, b, c )
+#        print('right =', str(right))
         ietsVakjes = [(X, Y) for X in range(self.rowsLen) for Y in range(self.collsLen) if self.matrixRC[X][Y] == 1]
 #        print(ietsVakjes) #Test
         for vakje in ietsVakjes:
-            d = math.fabs(a*vakje[0] + b*vakje[1] + c)/math.sqrt(a**2+b**2) #the distance between line and point
-            print('vakje is', vakje)
-            print('d is', d) #test
-            while angle >(.5 * Pi):
-                angle -= (.5 * Pi)
-            while angle < 0:
-                angle += (.5 * Pi)
-            #this is needed for our next calculation to work, I want angle between 0 and .5 Pi
-#             print('angle is', angle) #test
-            if d <= math.sin(.25* Pi + angle)/math.sqrt(2):#the line hits the square.
-#                 print('vakje is',vakje) #Test
-                foo = self._distance(x, y, vakje[0], vakje[1])
-                if retVal != None or foo < retVal: 
-                    retVal = foo
+            if (vakje[0] >= x and right) or (vakje[0] <= x and not right):
+                d = math.fabs(a*vakje[0] + b*vakje[1] + c)/math.sqrt(a**2+b**2) #the distance between line and point
+#                print('vakje is', vakje)
+#                print('d is', d) #test
+                while angle >(.5 * Pi):
+                    angle -= (.5 * Pi)
+                while angle < 0:
+                    angle += (.5 * Pi)
+                #this is needed for our next calculation to work, I want angle between 0 and .5 Pi
+#                 print('angle is', angle) #test
+                if d <= math.sin(.25* Pi + angle)/math.sqrt(2):#the line hits the square.
+#                    print('vakje is',vakje) #Test
+                    foo = self._distance(x, y, vakje[0], vakje[1])
+                    if retVal == None or foo < retVal: 
+                        retVal = foo
         return retVal
 
 
@@ -168,10 +190,10 @@ class Kaart:
         retVal = None
         for i in range(breedte+1):
             #I use negative angle cause the Y-axis is mirrored
-            newX = math.cos(-angle) * (i -.5 * breedte) + x
-            newY = math.sin(-angle) * (i -.5 * breedte) + y
+            newX = math.cos(angle) * (i -.5 * breedte) + x
+            newY = math.sin(angle) * (i -.5 * breedte) + y
             foo = self.how_far_line(newX, newY, angle)
-            if retVal == None or foo < retVal:
+            if (retVal == None or foo < retVal )and foo != None:
                 retVal = foo
         return retVal
 
