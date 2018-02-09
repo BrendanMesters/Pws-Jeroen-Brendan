@@ -1,4 +1,6 @@
 # have not yet tested the changes to how_far_free and nearest_unknown
+#test
+
 
 import math
 Pi = math.pi
