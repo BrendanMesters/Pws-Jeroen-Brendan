@@ -32,7 +32,7 @@ class Kaart:
             for line in lines:
                     self.matrixRC.append(list(line))
             print(self.rowsLen, self.collsLen)
-                
+                 
 
 
 
