@@ -50,6 +50,7 @@ void mainComunication() {  //Used to talk with an other devise
 }
 
 void procesCommand(char chr, String &str) {  //Check what command he has to execute and does it.
+  //str is the variable
   switch(chr){
     case 'M':  //Move
       Serial.println(str); 
@@ -63,7 +64,7 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
       Serial.println(var);
       break;
       
-    case 'T':  //Test
+    case 'K':  //Test
       if (test == 0){
         digitalWrite(A1, HIGH);
         test = 1;

@@ -23,22 +23,38 @@
   int distanceLinks;
   int distanceVoor;
   int distanceRechts;
+  int distanceRadar;
 
 
 // Afstandscencor pin definement
-  const int trigPinLinks = A4;
+  const int trigPinLinks = 10;
   const int echoPinLinks = A5;
-  const int trigPinVoor = 12;
+  const int trigPinVoor = 10;
   const int echoPinVoor = 13;
-  const int trigPinRechts = 2;
-  const int echoPinRechts = 3;
+  const int trigPinRechts = 10;
+  const int echoPinRechts = A4;
+  const int trigPinRadar = ;// test nog invullen
+  const int echoPinRadar = ;// test nog invullen
+  
 
 // de ir sensor zijn setup
 //collects data from an analog sensor
 // y= 11181x^-1,143 de functie moet nog worden aangepast
-int sensorpin = 0;                 // analog pin used to connect the sharp sensor
-float val = 0;                 // variable to store the values from sensor(initially zero)
-float afstand = 0;
+//int sensorpin = 0;                 // analog pin used to connect the sharp sensor
+//float val = 0;                 // variable to store the values from sensor(initially zero)
+//float afstand = 0;
+//void irSensor()
+//{
+  //if (val = 0){
+  //val = analogRead(sensorpin);       // reads the value of the sharp sensor
+  //Serial.println(val);            // prints the value of the sensor to the serial monitor 
+  //if(val != 0){ 
+    //afstand = (11181*pow(val,-1.143));
+    //Serial.print("dit is de afstand");
+    //Serial.println(val);
+  //}          
+ // }
+//}
 
 
 
@@ -53,6 +69,7 @@ float afstand = 0;
   
 AccelStepper stepper1(AccelStepper::HALF4WIRE, A0, A2, A1, A3); // motor links
 AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
+AccelStepper stepperR(AccelStepper::HALF4WIRE, , , , ); // motor voor de Radar
 
 // temp variables
   int inputR = 10; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
@@ -65,6 +82,8 @@ void setup() {
     Serial.begin(9600);
     stepper1.setMaxSpeed(5000); // motor links max stappen per sec
     stepper2.setMaxSpeed(5000); // motor rechts max stappen per sec
+    stepperR.setMaxSpeed(5000); // motor Radar max stappen per sec
+   
 
   //setup afsandsensoren
   //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
@@ -79,9 +98,10 @@ void setup() {
 
 
 void loop() {
-  irSensor();
-  drive(input); // de afstandsensoren moeten nog in drive en rotate
-  rotate(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
+  //irSensor();
+  radar
+  vooruit(input); // de afstandsensoren moeten nog in drive en rotate
+  draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
 void sensor(){
  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
@@ -125,21 +145,23 @@ void sensor(){
   
 }
 
-
-void irSensor()
-{
-  if (val = 0){
-  val = analogRead(sensorpin);       // reads the value of the sharp sensor
-  Serial.println(val);            // prints the value of the sensor to the serial monitor 
-  if(val != 0){ 
-    afstand = (11181*pow(val,-1.143));
-    Serial.print("dit is de afstand");
-    Serial.println(val);
-  }          
-  }
+void radar (){ // de stappenmotor moet er nog bij, die moet dan steeds 1 graad draaien en dan moet de afstand worden gemeten
+  //http://howtomechatronics.com/projects/arduino-radar-project/
+  // Clears the trigPinRechts
+  digitalWrite(trigPinRadar, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPinRechts on HIGH state for 10 micro seconds
+  digitalWrite(trigPinRadar, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPinRadar, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  long durationRadar = pulseIn(echoPinRadar, HIGH);
+  // Calculating the distance
+  distanceRadar = durationRadar*0.034/2; 
 }
 
-void drive (int cm){
+
+void vooruit (int cm){
   if(error) return;
 
     stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
@@ -167,7 +189,7 @@ void drive (int cm){
 
 
 // rotate functie opzet;
-void rotate(int graden){
+void draai(int graden){
   if(error) return; //Breaks out of roation if there is an error
   // voer de draai alleen uit als de afstandsensoren iets zien dat verder weg is dan test afstand
  
@@ -625,12 +647,16 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
   }
   
   switch(chr){
-    case 'D':  //Drive
-      drive(var); 
+    case 'V':  //vooruit rijden
+      vooruit(var); 
+      break;
+
+      case 'R':  //radar
+      radar(var); 
       break;
       
-    case 'R':  //Rotate
-      rotate(var);
+    case 'D':  //draaien
+      draai(var);
       break;
       
     case 'T':  //Test
