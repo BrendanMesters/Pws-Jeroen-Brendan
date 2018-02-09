@@ -1,7 +1,9 @@
 import math
 import kaart
 
-var = [float(raw_input('X locatie')),   float(raw_input('Y locatie')),   float(raw_input('Angle (without Pi)')),   float(raw_input('Breedte auto'))]
 
-foo = kaart()
+foo = kaart.Kaart()
+foo[0,0] = 0
+foo[0,4] = 2
 print(foo)
+#print(foo.matrixRC)
