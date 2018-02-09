@@ -134,7 +134,7 @@ void sensor(){
   // Calculating the distance
   if(durationVoor != 0){
     distanceVoor = durationVoor*0.034/2; 
-  }
+  }else{sensor();}
  
   // Clears the trigPinRechts
   digitalWrite(trigPinRechts, LOW);
@@ -148,7 +148,7 @@ void sensor(){
   // Calculating the distance
   if (durationRechts != 0){
     distanceRechts = durationRechts*0.034/2; 
-  }
+  }else{sensor();}
   
   
 }
