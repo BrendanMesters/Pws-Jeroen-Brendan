@@ -70,8 +70,8 @@ AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
 AccelStepper stepperR(AccelStepper::HALF4WIRE, 2, 4, 3, 5); // motor voor de Radar test
 
 // temp variables
-  int inputR = 10; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
-  int input = 10; //this is a temporary testing variable resembles the pi's input going forward(in cm).
+//  int inputR = 10; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
+//  int input = 10; //this is a temporary testing variable resembles the pi's input going forward(in cm).
 
 
 void setup() {  
@@ -97,10 +97,13 @@ void setup() {
 
 
 void loop() {
+  if(Serial.available()){
+    mainComunication();
+  }
   //irSensor();
-  radar(); // de radar functie aanroepen
-  vooruit(input); // de afstandsensoren moeten nog in drive en rotate
-  draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
+  //radar(); // de radar functie aanroepen
+  //vooruit(input); // de afstandsensoren moeten nog in drive en rotate
+  //draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
 void sensor(){
  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
@@ -144,7 +147,15 @@ void sensor(){
   
 }
 
-void radar (){ // de stappenmotor moet er nog bij, die moet dan steeds 1 graad draaien en dan moet de afstand worden gemeten
+void radar (){ 
+  if (error){Serial.print("RR"); return;} 
+  // een functie schrijven zodat radar 101 keer de komende haken doet
+   {
+    stepperR.move(40); //draait per keer van 40 stappen 40/4047*360 graden 
+   
+   while(stepperR.isRunning()){
+    stepperR.run(); 
+   }
   //http://howtomechatronics.com/projects/arduino-radar-project/
   // Clears the trigPinRechts
   digitalWrite(trigPinRadar, LOW);
@@ -157,12 +168,22 @@ void radar (){ // de stappenmotor moet er nog bij, die moet dan steeds 1 graad d
   long durationRadar = pulseIn(echoPinRadar, HIGH);
   // Calculating the distance
   distanceRadar = durationRadar*0.034/2; 
+  }
+  stepperR.move(-1 * stappenPerRotatie); //terug draain zodat de draden niet in de knoop komen
+  while(stepperR.isRunning()){
+    stepperR.run(); 
+   }
+   // aan het einde zeggen dat het klaar is
+   Serial.println("OK");
 }
 
 
 void vooruit (int cm){
-  if(error) return;
-
+    Serial.println(error);
+  if(error) {Serial.print("RR");return;}
+    
+    Serial.println("ik ben in vooruit");
+    Serial.println(cm);
     stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
     stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
     //calling run for both steppers to make them actualy run.
@@ -183,17 +204,20 @@ void vooruit (int cm){
   //  if() fout{        moet nog test
    //     run error;
    //   }
+   
+   // aan het einde zeggen dat het klaar is
+   Serial.println("OK");
 }
 
 
 
 // rotate functie opzet;
 void draai(int graden){
-  if(error) return; //Breaks out of roation if there is an error
+  if(error) {Serial.print("RR"); return; }//Breaks out of roation if there is an error
   // voer de draai alleen uit als de afstandsensoren iets zien dat verder weg is dan test afstand
  
-    stepper1.move( round(inputR * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
-    stepper2.move( round(inputR * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
+    stepper1.move( round(graden * gradenNaarStappen) ); // het draaien van de linker stappenmotor tijdens het draaien
+    stepper2.move( round(graden * -gradenNaarStappen) ); // het draaien van de rechter stappenmotor tijdens het draaien
     //calling run for both steppers to make them actualy run.
     int i = 10;
     while(stepper1.isRunning() || stepper2.isRunning()){
@@ -209,6 +233,9 @@ void draai(int graden){
     //  if() fout{        moet nog test
    //     run error;
    //   }
+
+   // aan het einde zeggen dat het klaar is
+   Serial.println("OK");
   }
 
 
@@ -572,6 +599,14 @@ void obstakelOntwijking(){
   }
 
 
+
+
+
+
+
+  
+
+
 // Brendan zijn code beneden
 
 void mainComunication() {  //Used to talk with an other devise
@@ -587,7 +622,9 @@ void mainComunication() {  //Used to talk with an other devise
     if (error) return;
   }
 }
+//Serial.println("OK");
 
+//Serial.print("RR");
 
 
 float stringToVariable(String &str) {
@@ -613,9 +650,8 @@ float stringToVariable(String &str) {
         return -1;
       } 
     }
-
     
-    if ( !( (str.charAt(0) > '0' && str.charAt(0) < '9') || str.charAt(0) == '.'  ) ) {  //Gives an error if the character isn't valid(between 0 and 9 or a decimal point)
+    if ( !( (str.charAt(0) >= '0' && str.charAt(0) <= '9') || str.charAt(0) == '.'  ) ) {  //Gives an error if the character isn't valid(between 0 and 9 or a decimal point)
       error = true;
       ERRORPRINT("Invalid character in float");
       return -1;
@@ -647,11 +683,12 @@ void procesCommand(char chr, String &str) {  //Check what command he has to exec
   
   switch(chr){
     case 'V':  //vooruit rijden
+      Serial.println(var);
       vooruit(var); 
       break;
 
       case 'R':  //radar
-      radar(var); 
+      radar(); 
       break;
       
     case 'D':  //draaien
