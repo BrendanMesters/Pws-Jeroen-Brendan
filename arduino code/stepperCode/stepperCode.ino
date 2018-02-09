@@ -33,8 +33,8 @@
   const int echoPinVoor = 13;
   const int trigPinRechts = 10;
   const int echoPinRechts = A4;
-  const int trigPinRadar = ;// test nog invullen
-  const int echoPinRadar = ;// test nog invullen
+  const int trigPinRadar = 11;// test nog invullen
+  const int echoPinRadar = 12;// test nog invullen
   
 
 // de ir sensor zijn setup
@@ -57,8 +57,6 @@
 //}
 
 
-
-
 // const int's van de auto
   const float bandRadius = 6.5*Pi; // omtrek van de band ;
   const int afstandWielDraaipunt = 17/2; // afstand van het wiel tot het draaipunt van de auto
@@ -69,12 +67,11 @@
   
 AccelStepper stepper1(AccelStepper::HALF4WIRE, A0, A2, A1, A3); // motor links
 AccelStepper stepper2(AccelStepper::HALF4WIRE, 6, 8, 7, 9);     // motor rechts
-AccelStepper stepperR(AccelStepper::HALF4WIRE, , , , ); // motor voor de Radar
+AccelStepper stepperR(AccelStepper::HALF4WIRE, 2, 4, 3, 5); // motor voor de Radar test
 
 // temp variables
   int inputR = 10; //this is a temporary testing variable resembles the pi's input for rotation(in degrees).
   int input = 10; //this is a temporary testing variable resembles the pi's input going forward(in cm).
-
 
 
 void setup() {  
@@ -93,13 +90,15 @@ void setup() {
     pinMode(echoPinVoor, INPUT); // Sets the echoPinVoor as an Input
     pinMode(trigPinRechts, OUTPUT); // Sets the trigPinRechts as an Output
     pinMode(echoPinRechts, INPUT); // Sets the echoPinRechts as an Input
+    pinMode(trigPinRadar, OUTPUT);// Sets the trigPinRadar as an Output
+    pinMode(echoPinRadar, INPUT);// Sets the echoPinRadar as an Input
 }
 
 
 
 void loop() {
   //irSensor();
-  radar
+  radar(); // de radar functie aanroepen
   vooruit(input); // de afstandsensoren moeten nog in drive en rotate
   draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
