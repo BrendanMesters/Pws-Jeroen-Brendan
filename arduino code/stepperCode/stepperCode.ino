@@ -106,6 +106,7 @@ void loop() {
   //draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
 }
 void sensor(){
+  
  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
   // Clears the trigPinLinks
   digitalWrite(trigPinLinks, LOW);
@@ -117,8 +118,9 @@ void sensor(){
   // Reads the echoPinLinks, returns the sound wave travel time in microseconds
   long durationLinks = pulseIn(echoPinLinks, HIGH);
   // Calculating the distance
-  distanceLinks = durationLinks*0.034/2; 
- 
+  if(durationLinks != 0){
+    distanceLinks = durationLinks*0.034/2; 
+  }else{sensor();}
     
   // Clears the trigPinVoor
   digitalWrite(trigPinVoor, LOW);
@@ -130,7 +132,9 @@ void sensor(){
   // Reads the echoPinVoor, returns the sound wave travel time in microseconds
   long durationVoor = pulseIn(echoPinVoor, HIGH);
   // Calculating the distance
-  distanceVoor = durationVoor*0.034/2; 
+  if(durationVoor != 0){
+    distanceVoor = durationVoor*0.034/2; 
+  }else{sensor();}
  
   // Clears the trigPinRechts
   digitalWrite(trigPinRechts, LOW);
@@ -142,7 +146,9 @@ void sensor(){
   // Reads the echoPin, returns the sound wave travel time in microseconds
   long durationRechts = pulseIn(echoPinRechts, HIGH);
   // Calculating the distance
-  distanceRechts = durationRechts*0.034/2; 
+  if (durationRechts != 0){
+    distanceRechts = durationRechts*0.034/2; 
+  }else{sensor();}
   
   
 }
@@ -179,19 +185,15 @@ void radar (){
 
 
 void vooruit (int cm){
-    Serial.println(error);
   if(error) {Serial.print("RR");return;}
-    
-    Serial.println("ik ben in vooruit");
-    Serial.println(cm);
     stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
     stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
     //calling run for both steppers to make them actualy run.
-    int i = 10;
+    int i = 100;
     while(stepper1.isRunning() || stepper2.isRunning()){
       stepper1.run();
       stepper2.run();
-      if(i % 10 == 0){
+      if(i % 100 == 0){
         obstakelOntwijking();
         Serial.print("i  ");
         Serial.println(i);
