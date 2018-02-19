@@ -16,7 +16,7 @@ De volgende folders:
 Er staat nog meer op [onze Google Drive](https://drive.google.com/drive/folders/0Bwz4SLY9bnJjaGFjNHdRSV8wM1E). [Ons verslag](https://docs.google.com/document/d/1WLbv0LlwangKMUz1aPUtUemHSutmvXKHvD2OK606zZs/edit?usp=sharing) is ook op Google Drive te vinden Ook is er gebruik gemaakt van [StackOverflow](https://stackoverflow.com/users/7473796/brendan-mesters?tab=questions) gebruikt, hier zijn vragen gesteld over code die niet werkte zodat wij snel geholpen konden worden door andere programeurs.
 
 # Arduino code
-de arduino code is bedoeld om de auto aan te sturen D.M.V `stepper.ino`. De code heeft een `drive()` functie en een `rotate()` functie die zijn respectievelijk bedoeld om rechtdoor te rijden en te draaien om het draaipunt. De functie `ObstakenOntwijking`, deze voert aaan de hand van van de uitgelezen waardes van onze _HC-SR04_ sensor waardes een van `8 cases`  in een `SwitchCase` functie. Deze functie moet voorkomen dat de auto muren raakt.
+de arduino code is bedoeld om de auto aan te sturen D.M.V `stepper.ino`. De code heeft een `drive()` functie en een `rotate()` functie die zijn respectievelijk bedoeld om rechtdoor te rijden en te draaien om het draaipunt. De functie `ObstakenOntwijking`, deze voert aaan de hand van van de uitgelezen waardes van onze _HC-SR04_ sensor waardes een van `8 cases`  in een `SwitchCase` functie. Deze functie moet voorkomen dat de auto muren raakt. Verder is er een `radar()`functie die de Rasberry Pi zijn kaartwaarden zal geven.
 
 # Python code
 De python code bestaat uit een hoofdprogramma met een of meerdere modules. De module `kaart` die regelt de matrix die ik gebruik om de kaart in op te slaan. Het hoofdprogramma heet `PWS Python code`.
