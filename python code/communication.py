@@ -1,20 +1,33 @@
 import serial
-import time
+ser = serial.Serial("/dev/tty.usbmodem411")
 
-ser = serial.Serial('/dev/cu.usbmodem621')
+def write(arg, answer = False):
+        assert type(arg) == str
+        retval = ser.write(str.encode(arg))
+        if answer == True:
+            return retval
 
 
-def read():
-    Tbegin = time.time()
-    while False == ser.in_waiting:
-        if Tbegin < (time.time()-60):
-            raise Exception('No message recieved from arduino while expecting a message')  #No return message in time.
-    time.sleep(0.02)
-    bitString = ser.read(ser.in_waiting)
-    retVal = str(bitString.strip())
-    retVal = retVal[2:-1]
-    return retVal
+def read(fullString = False, wait = False):
+        retval = None
+        if wait:
+            while ser.inWaiting() == 0:
+                pass
+            retval = ser.readline()
+        else:
+            if ser.inWaiting() != 0:
+                retval = ser.readline()
+        if fullString:
+            return retval
+        else:
+            return retval.strip()
 
-def write(command = False, variable = False):
-    assert (type(command) == str) and (type(variable) == int), 'Wrong/No input'
-    serial.print(command + str(variable))
+def main_loop():
+    while True:
+        arg = raw_input("Wat wil je doen")
+        if arg == 'Read' or arg == 'read':
+            foo = read()
+            if foo != None:
+                print(read())
+        elif arg == 'Write' or arg == 'write':
+            write(raw_input("Wat wil je schrijven").encode('utf-8'))
