@@ -42,11 +42,7 @@ class Kaart:
         for i in range(len(self.matrixRC)):
             retVal += '\n'
             for j in range(len(self.matrixRC[i])):
-<<<<<<< HEAD
-                retVal += str(self[i,j])
-=======
                 retVal += str(self[i, j])
->>>>>>> 1bcecd1a997aea21a7e5f2fa002727ef6ff1a413
         for index, new in enumerate((' ', '#', '?')):
             retVal = retVal.replace(str(index), new)
         return retVal
@@ -209,6 +205,34 @@ class Kaart:
             if retVal == None or foo < retVal:
                 retVal = foo
         return retVal
+
+
+    def radarMap(self, items):
+        retval = Kaart(2*max(a), 2*max(a))
+        vol = []
+        leeg = []
+        
+        anglePart = (2 * Pi)/len(items) #the angle between two "vision lines"
+        for i, item in enumerate(items):
+            x = cos(anglePart*i) * item
+            y = sin(anglePart*i) * item
+            vol.append([x, y])
+            delta = 0.05
+            for j in range((item+1)/delta):
+                x = cos(anglePart*i) * delta*j + max(a)
+                y = sin(anglePart*i) * delta*j + max(a)
+                if [x, y] not in leeg and [x, y] not in vol:
+                    leeg.append([x, y])
+        for x, y in leeg:
+            retval[x,y] = 0
+        for x, y in vol:
+            retval[x,y] = 1
+        return retval
+            
+            
+
+
+
 
 
     def combine(self, other, lbX, lbY): #lb = linksboven WIP!
