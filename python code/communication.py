@@ -1,6 +1,33 @@
 import serial
 import time
-ser = serial.Serial("/dev/ttyACM0")
+
+#Making ser, this is a way to make sure that we don't have to manualy reselect a usb port
+try:
+    ser = serial.Serial("/dev/ttyACM0")
+except:
+    pass
+    
+#/dev/ttyACM0 bestaat niet
+if 'ser' not in globals():
+    try:
+        ser = serial.Serial("/dev/ttyACM1")
+    except:
+        pass
+
+if 'ser' not in globals():
+    try:
+        ser = serial.Serial("/dev/tty.usbmodem621")
+    except:
+        pass
+
+if 'ser' not in globals():
+    try:
+        ser = serial.Serial("/dev/tty.usbmodem411")
+    except:
+        pass
+
+    
+
 
 def write(arg, answer = False):
     assert type(arg) == str
