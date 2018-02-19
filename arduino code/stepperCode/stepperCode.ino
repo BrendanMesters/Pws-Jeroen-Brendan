@@ -153,15 +153,16 @@ void sensor(){
   
 }
 
-void radar (){ 
+void radar (){
+  
   if (error){Serial.print("RR"); return;} 
   // een functie schrijven zodat radar 101 keer de komende haken doet
-   {
-    stepperR.move(40); //draait per keer van 40 stappen 40/4047*360 graden 
+  for (int i = 0; i < 101; i++){
+  stepperR.move(40); //draait per keer van 40 stappen 40/4047*360 graden 
    
-   while(stepperR.isRunning()){
+  while(stepperR.isRunning()){
     stepperR.run(); 
-   }
+  }
   //http://howtomechatronics.com/projects/arduino-radar-project/
   // Clears the trigPinRechts
   digitalWrite(trigPinRadar, LOW);
@@ -174,13 +175,14 @@ void radar (){
   long durationRadar = pulseIn(echoPinRadar, HIGH);
   // Calculating the distance
   distanceRadar = durationRadar*0.034/2; 
+  Serial.println(distanceRadar);
   }
-  stepperR.move(-1 * stappenPerRotatie); //terug draain zodat de draden niet in de knoop komen
+  stepperR.move(-1 * 40/4047*360 * i); //terug draain zodat de draden niet in de knoop komen
   while(stepperR.isRunning()){
     stepperR.run(); 
-   }
-   // aan het einde zeggen dat het klaar is
-   Serial.println("OK");
+  }
+  // aan het einde zeggen dat het klaar is
+  Serial.println("OK");
 }
 
 
