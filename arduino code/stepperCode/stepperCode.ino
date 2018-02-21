@@ -190,13 +190,13 @@ void vooruit (int cm){
     stepper1.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de linker stappenmotor 
     stepper2.move( round(cm / bandRadius * stappenPerRotatie) ); // het draaien van de rechter stappenmotor
     //calling run for both steppers to make them actualy run.
-    int i = 100;
+    int i = 10;
     while(stepper1.isRunning() || stepper2.isRunning()){
       stepper1.run();
       stepper2.run();
-      if(i % 100 == 0){
+      if(i % 10 == 0){
         obstakelOntwijking();
-        Serial.print("i  ");
+        Serial.print("vooruit i  ");
         Serial.println(i);
       }
       i++;
@@ -228,7 +228,7 @@ void draai(int graden){
       stepper2.run();
       if(i % 10 == 0){
         obstakelOntwijking();
-        Serial.print("i is");
+        Serial.print(" draai i is  ");
         Serial.println(i);
       }
       i++;
