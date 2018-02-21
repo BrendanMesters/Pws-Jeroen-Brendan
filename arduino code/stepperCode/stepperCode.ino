@@ -100,11 +100,7 @@ void loop() {
   if(Serial.available()){
     mainComunication();
   }
-  //irSensor();
-  //radar(); // de radar functie aanroepen
-  //vooruit(input); // de afstandsensoren moeten nog in drive en rotate
-  //draai(inputR); // de anti bots moet in bijde functies zelf verwerkt worden
-}
+  
 void sensor(){
   
  //http://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
