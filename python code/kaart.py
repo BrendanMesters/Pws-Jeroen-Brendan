@@ -6,7 +6,7 @@ import math
 Pi = math.pi
 
 
-class Kaart:
+class Kaart: 
     """ een matrix die de kaart van de auto aan gaat geven 0 is niets, 1 is iets
     en 2 is onbekend.
     links boven is (0,0) als je x naar rechts gaat en y naar beneden ben je bij locatie (x,y)
@@ -16,7 +16,7 @@ class Kaart:
     het midden van het linker boven vakje is dan dus (0.5, 0.5)
     """
     
-    def __init__(self, rowsLen = 10, collsLen = 11, file='test123.txt'): #werkt
+    def __init__(self, rowsLen = 3, collsLen = 4, file='test123.txt'): #werkt
         self.matrixRC = []
         if not file:
             self.rowsLen = rowsLen
@@ -27,22 +27,28 @@ class Kaart:
             pre_map = open(file)
             pre_lines = pre_map.readlines()
             lines = list(map(lambda l:l.strip('\n'), pre_lines))
-            self.rowsLen = len(lines)
-            self.collsLen = max(map(len, lines))
+            self.collsLen = len(lines)
+            self.rowsLen = max(map(len, lines))
+            pre_matrix = ['' for _ in range(self.rowsLen)]
             for line in lines:
-                    self.matrixRC.append(list(line))
-            print(self.rowsLen, self.collsLen)
-                
+                for i, char in enumerate(line):
+                    pre_matrix[i] += char
+            for i in pre_matrix:
+                self.matrixRC.append(list(i)) 
 
 
 
     def __str__(self): #werkt
 #        retVal = '\n'.join(''.join(map(str, row)) for row in self.matrixRC) #Werkte niet zoals ik wilde
+        pre_retVal = ['' for _ in range(self.collsLen)]
         retVal = str()
-        for i in range(len(self.matrixRC)):
-            retVal += '\n'
-            for j in range(len(self.matrixRC[i])):
-                retVal += str(self[i, j])
+        for x in range(len(self.matrixRC)):
+            for y in range(len(self.matrixRC[x])):
+                pre_retVal[y] += str(self.matrixRC[x][y])
+        for i in pre_retVal:
+            if i != 0:
+                retVal += '\n'
+            retVal += i
         for index, new in enumerate((' ', '#', '?')):
             retVal = retVal.replace(str(index), new)
         return retVal
@@ -58,14 +64,13 @@ class Kaart:
         self.matrixRC[r][c] = value
 
 
-    def __iter__(self): #werkt
-        for i in self.matrixRC:
+    def __iter__(self): 
+       for i in zip(*self.matrixRC):
             for j in i:
                 yield j
 
-
-    def __next__(self): #werkt
-        for i in self.matrixRC:
+    def __next__(self): 
+        for i in zip(*self.matrixRC):
             for j in i:
                 return j
 
@@ -75,26 +80,31 @@ class Kaart:
         if location == 0: #top
             for i in range(len(self.matrixRC)):
                 self.matrixRC[i].insert(0, 2)
+            self.collsLen += 1
         elif location == 1: #right
-            self.matrixRC.append([2 for _ in range( len( self.matrixRC(0) ) ) ])                      
+            self.matrixRC.append([2 for _ in range( len( self.matrixRC[0] ) ) ])
+            self.rowsLen += 1
         elif location == 2: #bottom
             for i in range(len(self.matrixRC)):
                 self.matrixRC[i].append(2)
+            self.collsLen += 1
         elif location == 3: #left
-            self.matrixRC.insert(0, [2 for _ in range( len( self.matrixRC(0) ) ) ] )
+            self.matrixRC.insert(0, [2 for _ in range( len( self.matrixRC[0] ) ) ] )
+            self.rowsLen += 1
         else:
             raise Exception('Wrong value for _add function in matrix, expected location to be between 0 and 3 got', location)
+
 
 
     def _distance(self, x1, y1, x2, y2): #werkt
         return math.sqrt(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2))
         
 
-    def _IRInfoToList(self, string): #nog niet getest.
-        retVal = string.split(',')
-        for num, val in enumerate(retVal):
-            retVal[num] = int(val)
-        return retVal 
+#     def _IRInfoToList(self, string): #nog niet getest.
+#         retVal = string.split(',')
+#         for num, val in enumerate(retVal):
+#             retVal[num] = int(val)
+#         return retVal 
 
 
         #returns all the locations our line crosses.
@@ -109,11 +119,11 @@ class Kaart:
 
 
     def how_high(self): #werkt
-        return len(self.matrixRC)
+        return self.collsLen
         
 
     def how_wide(self): #werkt
-        return len(self.matrixRC[0])
+        return self.rowsLen
         
         
     def debugPrint(self): #werkt
@@ -227,6 +237,7 @@ class Kaart:
             retval[x,y] = 0
         for x, y in vol:
             retval[x,y] = 1
+        print(retval)
         return retval
             
             
